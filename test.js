@@ -10,6 +10,10 @@ test.beforeEach(t => {
 
 test('should throw on empty appName', t => t.throws(() => { var t = new nodeGlvrd(); }, Error));
 
-test('should save appName', t => t.is(t.context.glvrd.appName, 'testApp'));
+test('should save appName', t => t.is(t.context.glvrd.params.app, 'testApp'));
 
-test('should set default request url', t => t.is(t.context.glvrd.request.defaults.baseUrl, endpointsSpec.baseUrl));
+test('should check server status', t => {
+  return t.context.glvrd.checkStatus().then(
+    response => t.same(response, endpointsSpec.endpoints.getStatus.responseExample)
+  );
+});
