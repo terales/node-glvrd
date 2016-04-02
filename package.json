@@ -1,7 +1,7 @@
 {
   "name": "node-glvrd",
   "version": "0.0.1",
-  "description": "",
+  "description": "Nodejs wrapper for glvrd.ru API",
   "main": "index.es5.js",
   "files": [
     "index.es5.js"
