@@ -40,9 +40,13 @@
     "coveralls": "^2.11.8",
     "eslint": "^2.4.0",
     "eslint-config-airbnb": "^6.2.0",
+    "eslint-plugin-react": "^4.2.3",
     "eslint-plugin-require-path-exists": "^1.1.5",
     "npm-run-all": "^1.5.1",
     "nyc": "^6.0.0",
     "rimraf": "^2.5.2"
+  },
+  "dependencies": {
+    "request": "^2.69.0"
   }
 }
