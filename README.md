@@ -21,9 +21,9 @@ var glvrd = new nodeGlvrd('Super-duper/1.0');
 
 ## API
 
-### new nodeGlvrd(appName)
+### `new nodeGlvrd(appName)`
 
-#### appName `(обязательный, строка)`k
+#### `appName` <sup>(обязательный, строка)</sup>
 
 Заранее регистрировать appName не нужно, выбирайте любой разумный вариант. Предлагаемый формат и примеры значений:
 
