@@ -65,11 +65,11 @@ MIT © [Aleksander Terekhov](http://terales.info)
 [npm-url]: https://npmjs.org/package/node-glvrd
 [npm-image]: https://img.shields.io/npm/v/node-glvrd.svg?style=flat-square
 
-[travis-url]: https://travis-ci.org/TerAleS/node-glvrd
-[travis-image]: https://img.shields.io/travis/TerAleS/node-glvrd.svg?style=flat-square
+[travis-url]: https://travis-ci.org/terales/node-glvrd
+[travis-image]: https://img.shields.io/travis/terales/node-glvrd.svg?style=flat-square
 
-[coveralls-url]: https://coveralls.io/r/TerAleS/node-glvrd
-[coveralls-image]: https://img.shields.io/coveralls/TerAleS/node-glvrd.svg?style=flat-square
+[coveralls-url]: https://coveralls.io/r/terales/node-glvrd
+[coveralls-image]: https://img.shields.io/coveralls/terales/node-glvrd.svg?style=flat-square
 
-[depstat-url]: https://david-dm.org/TerAleS/node-glvrd
-[depstat-image]: https://david-dm.org/TerAleS/node-glvrd.svg?style=flat-square
+[depstat-url]: https://david-dm.org/terales/node-glvrd
+[depstat-image]: https://david-dm.org/terales/node-glvrd.svg?style=flat-square
