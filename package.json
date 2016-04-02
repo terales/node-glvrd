@@ -1,7 +1,7 @@
 {
   "name": "node-glvrd",
   "version": "0.0.1",
-  "description": "Nodejs wrapper for glvrd.ru API",
+  "description": "",
   "main": "index.es5.js",
   "files": [
     "index.es5.js"
@@ -23,12 +23,7 @@
     "type": "git",
     "url": "git+https://github.com/TerAleS/node-glvrd.git"
   },
-  "keywords": [
-    "api",
-    "wrapper",
-    "glvrd",
-    "Главред"
-  ],
+  "keywords": [],
   "author": "Aleksander Terekhov <www.terales.info> (http://terales.info)",
   "license": "MIT",
   "bugs": {

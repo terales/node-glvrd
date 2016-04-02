@@ -5,7 +5,7 @@
 [![Coveralls Status][coveralls-image]][coveralls-url]
 [![Dependency Status][depstat-image]][depstat-url]
 
-> Nodejs wrapper for glvrd.ru API
+> 
 
 ## Install
 
