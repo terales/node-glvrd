@@ -21,14 +21,11 @@ var glvrd = new nodeGlvrd('Super-duper/1.0');
 
 ## API
 
-### nodeGlvrd(appName)
+### new nodeGlvrd(appName)
 
-#### appName
+#### appName `(обязательный, строка)`k
 
-*Required*  
-Type: `String`
-
-Заранее регистрировать app не нужно, выбирайте любой разумный вариант. Предлагаемый формат и примеры значений:
+Заранее регистрировать appName не нужно, выбирайте любой разумный вариант. Предлагаемый формат и примеры значений:
 
 * Super-duper/1.0
 * GreatPlugin/0.2.3beta
