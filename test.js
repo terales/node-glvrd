@@ -23,3 +23,15 @@ test('should check server status', t => {
     response => t.same(response, endpointsSpec.endpoints.getStatus.responseExample)
   );
 });
+
+test('should create session and save session id & lifespan value', t => {
+  var responseExample = endpointsSpec.endpoints.postSession.responseExample;
+
+  t.context.requestStub.yields(null, null, responseExample);
+
+  return t.context.glvrd._createSession().then(response => {
+    t.same(response, responseExample);
+    t.is(t.context.glvrd.params.lifespan, responseExample.lifespan);
+    t.is(t.context.glvrd.params.session,  responseExample.session);
+  });
+});

@@ -51,6 +51,16 @@ class nodeGlvrd {
       });
     });
   }
+
+  _createSession() {
+    return new Promise(resolve =>
+      this._makeRequest('postSession').then(response => {
+        this.params.session = response.session;
+        this.params.lifespan = response.lifespan;
+        resolve(response);
+      })
+    );
+  }
 }
 
 export default nodeGlvrd;
