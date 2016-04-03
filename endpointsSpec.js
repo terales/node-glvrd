@@ -1,9 +1,9 @@
 export default {
-  "baseUrl": "https://api.glvrd.ru/v2/",
+  "baseUrl": "https://api.glvrd.ru/v2",
   "endpoints": {
     "getStatus": {
-      "name": "status",
-      "method": "GET",
+      "name": "/status/",
+      "method": "get",
       "queryParams": ["app"],
       "body": [],
       "responseExample": {
@@ -13,8 +13,8 @@ export default {
       }
     },
     "postStatus": {
-      "name": "status",
-      "method": "POST",
+      "name": "/status/",
+      "method": "post",
       "queryParams": ["app", "session"],
       "body": [],
       "responseExample": {
@@ -24,8 +24,8 @@ export default {
       }
     },
     "postSession": {
-      "name": "session",
-      "method": "POST",
+      "name": "/session/",
+      "method": "post",
       "queryParams": ["app"],
       "body": [],
       "responseExample": {
@@ -35,8 +35,8 @@ export default {
       }
     },
     "postProofread": {
-      "name": "proofread",
-      "method": "POST",
+      "name": "/proofread/",
+      "method": "post",
       "queryParams": ["app", "session"],
       "body": ["text"],
       "textExample": "Можно ли представить современный мир без ссылок? Едва ли. И до недавнего времени сервис «Главред» никак не отвечал на вызовы времени, связанные с необходимостью создания гипертекстовых связей в Глобальной паутине.",
@@ -54,8 +54,8 @@ export default {
       }
     },
     "postHints": {
-      "name": "hints",
-      "method": "POST",
+      "name": "/hints/",
+      "method": "post",
       "queryParams": ["app", "session"],
       "body": ["ids"],
       "responseExample": {
