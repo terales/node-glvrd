@@ -9,6 +9,13 @@ test.beforeEach(t => {
   t.context.glvrd = new nodeGlvrd('testApp');
   t.context.fakeServer = nock(endpointsSpec.baseUrl).log(console.log);
   nock.disableNetConnect();
+
+  t.context.catchExpectedRequest = function(endpoint) {
+    t.context
+      .fakeServer[endpoint.method](endpoint.name)
+      .query({app: 'testApp'}) // TODO Prepare expected queries in endpointSpecs
+      .reply(200, endpoint.responseExample);
+  }
 });
 
 test('should throw on empty appName', t => t.throws(() => { var t = new nodeGlvrd(); }, Error));
@@ -18,7 +25,7 @@ test('should save appName', t => t.is(t.context.glvrd.params.app, 'testApp'));
 test('should check server status', t => {
   let getStatusEndpoint = endpointsSpec.endpoints.getStatus;
 
-  t.context.fakeServer[getStatusEndpoint.method](getStatusEndpoint.name).query({app: 'testApp'}).reply(200, getStatusEndpoint.responseExample);
+  t.context.catchExpectedRequest(getStatusEndpoint);
 
   return t.context.glvrd.checkStatus().then(
     response => t.same(response, getStatusEndpoint.responseExample)
@@ -28,7 +35,7 @@ test('should check server status', t => {
 test('should create session and save session id & lifespan value', t => {
   var postSession = endpointsSpec.endpoints.postSession;
 
-  t.context.fakeServer[postSession.method](postSession.name).query({app: 'testApp'}).reply(200, postSession.responseExample);
+  t.context.catchExpectedRequest(postSession);
 
   return t.context.glvrd._createSession().then(response => {
     t.same(response, postSession.responseExample);
@@ -37,12 +44,12 @@ test('should create session and save session id & lifespan value', t => {
   });
 });
 
-test('should proofread text and save hints to cache', t => { // TODO Fix this test
+test('should proofread text and save hints to cache', t => {
   var postProofread = endpointsSpec.endpoints.postProofread;
   var postHints     = endpointsSpec.endpoints.postHints;
 
-  t.context.fakeServer[postProofread.method](postProofread.name).query({app: 'testApp'}).reply(200, postProofread.responseExample); // TODO Add session to query
-  t.context.fakeServer[postHints.method](postHints.name).query({app: 'testApp'}).reply(200, postHints.responseExample); // TODO Add session to query
+  t.context.catchExpectedRequest(postProofread);
+  t.context.catchExpectedRequest(postHints);
 
   return t.context.glvrd.proofread(postProofread.textExample)
     .then(fragments => {
