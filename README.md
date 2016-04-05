@@ -39,7 +39,7 @@ MIT © [Aleksander Terekhov](http://terales.info)
 
 | Обозначение | Код | Описание |
 |:---:|---|---|
-| :art: | `:art:` | when improving the **format**/structure of the code |
+| :art: | `:art:` | when improving the **format**/structure of the code  |
 | :racehorse: | `:racehorse:` | when improving **performance** |
 | :books: | `:books:` | when writing **docs** |
 | :bug: | `:bug:` | when reporting a **bug** |
