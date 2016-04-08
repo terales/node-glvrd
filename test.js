@@ -7,7 +7,7 @@ import endpointsSpec from './endpointsSpec.js';
 
 test.beforeEach(t => {
   t.context.glvrd = new nodeGlvrd('testApp');
-  t.context.fakeServer = nock(endpointsSpec.baseUrl).log(console.log);
+  t.context.fakeServer = nock(endpointsSpec.baseUrl);
   nock.disableNetConnect();
 
   t.context.catchExpectedRequest = function(endpoint) {
@@ -64,7 +64,8 @@ test('should proofread text and save hints to cache', t => {
       ]);
 
       t.same(t.context.glvrd.hintsCache, postHints.responseExample.hints)
-    }, error => { console.log(error); t.fail(); } );
+    }, error => { console.log(error); t.fail(); } )
+    .catch(error => { console.log(error); t.fail(); });
 });
 
 test.todo('Implement clearing hints cache on session update');
