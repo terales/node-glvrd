@@ -35,6 +35,17 @@ var glvrd = new nodeGlvrd('Super-duper/1.0');
 
 MIT © [Aleksander Terekhov](http://terales.info)
 
+### Работа в Node.js 0.10
+
+Для запуска в приложении под Node.js 0.10, нужно добавить [полифил Promise]:
+
+```js
+require('es6-promise').polyfill();
+var postcss = require('postcss');
+```
+
+[полифил Promise]: https://github.com/jakearchibald/es6-promise
+
 ## Обозначения коммитов
 
 | Обозначение | Код | Описание |
