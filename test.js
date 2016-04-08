@@ -63,9 +63,28 @@ test('should proofread text and save hints to cache', t => {
         { start: 199, end: 217, hint: { id: 'r585918453672', name: 'Газетный штамп',       description: 'Напишите «интернет» без&nbsp;кавычек. Можно даже с&nbsp;заглавной' } }
       ]);
 
-      t.same(t.context.glvrd.hintsCache, postHints.responseExample.hints)
-    }, error => { console.log(error); t.fail(); } )
-    .catch(error => { console.log(error); t.fail(); });
+      t.same(t.context.glvrd.hintsCache, postHints.responseExample.hints);
+    }).catch(error => { console.log(error); t.fail(); });
+});
+
+test('should use cached hints for proofread test', t => {
+  var postProofread = endpointsSpec.endpoints.postProofread;
+  t.context.glvrd.hintsCache = endpointsSpec.endpoints.postHints.responseExample.hints;
+
+  t.context.catchExpectedRequest(postProofread);
+
+  return t.context.glvrd.proofread(postProofread.textExample)
+    .then(fragments => {
+      t.same(fragments, [
+        { start: 5,   end: 25,  hint: { id: 'r772367523480', name: 'Газетный штамп',       description: 'Манерно, попробуйте проще' } },
+        { start: 26,  end: 37,  hint: { id: 'r741067498476', name: 'Необъективная оценка', description: 'Удалите или докажите фактами' } },
+        { start: 54,  end: 61,  hint: { id: 'r772592703516', name: 'Газетный штамп',       description: 'Если вы&nbsp;не провинциальный журналист, замените на&nbsp;одно простое слово' } },
+        { start: 65,  end: 85,  hint: { id: 'r600555156012', name: 'Паразит времени',      description: 'Уберите, уточните или противопоставьте прошлому или будущему' } },
+        { start: 112, end: 137, hint: { id: 'r772817883552', name: 'Газетный штамп',       description: 'Если вы&nbsp;не провинциальный журналист, замените на&nbsp;одно простое слово' } },
+        { start: 139, end: 165, hint: { id: 'r661353765732', name: 'Сложный синтаксис',    description: 'Упростите' } },
+        { start: 199, end: 217, hint: { id: 'r585918453672', name: 'Газетный штамп',       description: 'Напишите «интернет» без&nbsp;кавычек. Можно даже с&nbsp;заглавной' } }
+      ]);
+    }).catch(error => { console.log(error); t.fail(); });
 });
 
 test.todo('Implement clearing hints cache on session update');

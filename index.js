@@ -105,7 +105,7 @@ class nodeGlvrd {
 
     return new Promise((resolve, reject) => {
       if (uncachedHints.length === 0) {
-        resolve(fillFragmentsWithHintFromCache(rawFragments));
+        return resolve(fillFragmentsWithHintFromCache(rawFragments));
       }
 
       let uncachedHintIds = {};
