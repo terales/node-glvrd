@@ -33,11 +33,10 @@ class nodeGlvrd {
   }
 
   proofread(text) {
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
       this._makeRequest('postProofread', 'text=' + text)
         .then(rawFragments    => this._fillRawFragmentsWithHints(rawFragments.fragments))
-        .then(filledFragments => resolve(filledFragments))
-        .catch(error => reject(error));
+        .then(filledFragments => resolve(filledFragments));
     });
   }
 
@@ -65,7 +64,7 @@ class nodeGlvrd {
 
       this.req(options, function requestCallback(error, response, body) {
         if (error) {
-          reject(error);
+          throw error;
         }
 
         resolve(body);

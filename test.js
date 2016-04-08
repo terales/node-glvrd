@@ -64,7 +64,7 @@ test('should proofread text and save hints to cache', t => {
       ]);
 
       t.same(t.context.glvrd.hintsCache, postHints.responseExample.hints);
-    }).catch(error => { console.log(error); t.fail(); });
+    });
 });
 
 test('should use cached hints for proofread test', t => {
@@ -74,7 +74,7 @@ test('should use cached hints for proofread test', t => {
   t.context.catchExpectedRequest(postProofread);
 
   return t.context.glvrd.proofread(postProofread.textExample)
-    .then(fragments => {
+    .then(fragments =>
       t.same(fragments, [
         { start: 5,   end: 25,  hint: { id: 'r772367523480', name: 'Газетный штамп',       description: 'Манерно, попробуйте проще' } },
         { start: 26,  end: 37,  hint: { id: 'r741067498476', name: 'Необъективная оценка', description: 'Удалите или докажите фактами' } },
@@ -83,8 +83,8 @@ test('should use cached hints for proofread test', t => {
         { start: 112, end: 137, hint: { id: 'r772817883552', name: 'Газетный штамп',       description: 'Если вы&nbsp;не провинциальный журналист, замените на&nbsp;одно простое слово' } },
         { start: 139, end: 165, hint: { id: 'r661353765732', name: 'Сложный синтаксис',    description: 'Упростите' } },
         { start: 199, end: 217, hint: { id: 'r585918453672', name: 'Газетный штамп',       description: 'Напишите «интернет» без&nbsp;кавычек. Можно даже с&nbsp;заглавной' } }
-      ]);
-    }).catch(error => { console.log(error); t.fail(); });
+      ])
+    );
 });
 
 test.todo('Implement clearing hints cache on session update');
