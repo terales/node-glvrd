@@ -6,6 +6,7 @@ export default {
       "method": "get",
       "queryParams": ["app"],
       "body": [],
+      "queryExample": { "app": "testApp" },
       "responseExample": {
         "status": "ok",
         "max_text_length": 10000,
@@ -17,6 +18,7 @@ export default {
       "method": "post",
       "queryParams": ["app", "session"],
       "body": [],
+      "queryExample": { "app": "testApp", "session": "b7e99fd7-4d97-4042-9a0b-df6b1de1af35" },
       "responseExample": {
         "status": "ok",
         "max_text_length": 10000,
@@ -28,6 +30,7 @@ export default {
       "method": "post",
       "queryParams": ["app"],
       "body": [],
+      "queryExample": { "app": "testApp" },
       "responseExample": {
         "status": "ok",
         "session": "b7e99fd7-4d97-4042-9a0b-df6b1de1af35",
@@ -40,6 +43,7 @@ export default {
       "queryParams": ["app", "session"],
       "body": ["text"],
       "textExample": "Можно ли представить современный мир без ссылок? Едва ли. И до недавнего времени сервис «Главред» никак не отвечал на вызовы времени, связанные с необходимостью создания гипертекстовых связей в Глобальной паутине.",
+      "queryExample": { "app": "testApp", "session": "b7e99fd7-4d97-4042-9a0b-df6b1de1af35" },
       "responseExample": {
         "status": "ok",
         "fragments": [
@@ -58,6 +62,7 @@ export default {
       "method": "post",
       "queryParams": ["app", "session"],
       "body": ["ids"],
+      "queryExample": { "app": "testApp", "session": "b7e99fd7-4d97-4042-9a0b-df6b1de1af35" },
       "responseExample": {
         "status": "ok",
         "hints": {
