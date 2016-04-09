@@ -13,7 +13,7 @@ test.beforeEach(t => {
   t.context.catchExpectedRequest = function(endpoint) {
     t.context
       .fakeServer[endpoint.method](endpoint.name)
-      .query({app: 'testApp'}) // TODO Prepare expected queries in endpointSpecs
+      .query(endpoint.queryExample)
       .reply(200, endpoint.responseExample);
   }
 });
@@ -38,16 +38,17 @@ test('should create session and save session id & lifespan value', t => {
   t.context.catchExpectedRequest(postSession);
 
   return t.context.glvrd._createSession().then(response => {
-    t.same(response, postSession.responseExample);
-    t.is(t.context.glvrd.params.lifespan, postSession.responseExample.lifespan);
     t.is(t.context.glvrd.params.session,  postSession.responseExample.session);
+    t.is(t.context.glvrd.params.sessionLifespan, postSession.responseExample.lifespan);
   });
 });
 
 test('should proofread text and save hints to cache', t => {
+  var postSession   = endpointsSpec.endpoints.postSession;
   var postProofread = endpointsSpec.endpoints.postProofread;
   var postHints     = endpointsSpec.endpoints.postHints;
 
+  t.context.catchExpectedRequest(postSession);
   t.context.catchExpectedRequest(postProofread);
   t.context.catchExpectedRequest(postHints);
 
@@ -64,16 +65,21 @@ test('should proofread text and save hints to cache', t => {
       ]);
 
       t.same(t.context.glvrd.hintsCache, postHints.responseExample.hints);
-    });
+    })
+    .catch(error => { console.log(error); t.fail(); });
 });
 
 test('should use cached hints for proofread test', t => {
+  var postSession = endpointsSpec.endpoints.postSession;
   var postProofread = endpointsSpec.endpoints.postProofread;
-  t.context.glvrd.hintsCache = endpointsSpec.endpoints.postHints.responseExample.hints;
 
+  t.context.catchExpectedRequest(postSession);
   t.context.catchExpectedRequest(postProofread);
 
-  return t.context.glvrd.proofread(postProofread.textExample)
+  return t.context.glvrd._createSession()
+    .then(() => {
+      t.context.glvrd.hintsCache = endpointsSpec.endpoints.postHints.responseExample.hints; // emulate cache
+      return t.context.glvrd.proofread(postProofread.textExample); })
     .then(fragments =>
       t.same(fragments, [
         { start: 5,   end: 25,  hint: { id: 'r772367523480', name: 'Газетный штамп',       description: 'Манерно, попробуйте проще' } },
@@ -87,7 +93,9 @@ test('should use cached hints for proofread test', t => {
     );
 });
 
-test.todo('should create session if there is no session key');
+test.todo('should create session if there is no session key on proofread');
+
+test.todo('should prolongate session on any post request');
 
 test.todo('should create session if session key is outdated');
 
@@ -112,3 +120,5 @@ test.todo('should retry request if there was too mane requests sent');
 test.todo('should update session key if there is error about it from glvrd');
 
 test.todo('should throw error if http response code is in 400-500 group');
+
+test.todo('switch from functional to unit tests');

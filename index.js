@@ -1,6 +1,6 @@
 'use strict';
 
-import request from 'request';
+import request from 'request-promise';
 import endpointsSpec from './endpointsSpec.js';
 
 class nodeGlvrd {
@@ -33,53 +33,107 @@ class nodeGlvrd {
   }
 
   proofread(text) {
-    return new Promise(resolve => {
+
+    return new Promise((resolve, reject) => {
       this._makeRequest('postProofread', 'text=' + text)
         .then(rawFragments    => this._fillRawFragmentsWithHints(rawFragments.fragments))
-        .then(filledFragments => resolve(filledFragments));
+        .then(filledFragments => resolve(filledFragments))
+        .catch(error => { console.log('proofread throw'); reject(error); });
     });
   }
 
   _makeRequest(endpointKey, body, isJson = true) {
     var endpoint = endpointsSpec.endpoints[endpointKey];
-    var queryParams = {};
 
-    endpoint.queryParams.forEach(queryParamName => {
+    return new Promise((resolve, reject) => {
+        if (endpoint.queryParams.indexOf('session') == -1) {
+          return resolve();
+        }
+
+        this._checkSessionBeforeRequest()
+          .then(() => resolve())
+          .catch(error => { console.log('after _checkSessionBeforeRequest throw'); reject(error); });
+      })
+      .then(() => this._fillQueryParams(endpoint.queryParams))
+      .then(queryParams => {
+        let options = {
+          method: endpoint.method,
+          uri: endpoint.name,
+          qs: queryParams,
+          json: isJson
+        };
+
+        if (body) {
+          options.body = body;
+        }
+
+        return this.req(options);
+      })
+      .then(responseBody => {
+        if (endpoint.method == 'post') {
+          this._prolongateSession();
+        }
+
+        return responseBody;
+      })
+      .catch(error => { console.log('throw _makeRequest'); throw error; });
+  }
+
+  _checkSessionBeforeRequest() {
+    return new Promise((resolve, reject) => {
+
+      if (!this.params.session || this.params.sessionValidUntil < (Date.now() + 1000)) {
+        return this._createSession()
+          .then(() => resolve())
+          .catch(error => { console.log('_checkSessionBeforeRequest throw'); reject(error); });
+      }
+
+      resolve();
+    });
+  }
+
+  _fillQueryParams(endpointQueryParams) {
+    let queryParams = {};
+
+    endpointQueryParams.forEach(queryParamName => {
       if (this.params.hasOwnProperty(queryParamName)) {
         queryParams[queryParamName] = this.params[queryParamName];
       }
     });
 
-    return new Promise((resolve, reject) => {
-      let options = {
-        method: endpoint.method,
-        uri: endpoint.name,
-        qs: queryParams,
-        json: isJson
-      };
-
-      if (body) {
-        options.body = body;
-      }
-
-      this.req(options, function requestCallback(error, response, body) {
-        if (error) {
-          throw error;
-        }
-
-        resolve(body);
-      });
-    });
+    return queryParams;
   }
 
   _createSession() {
-    return new Promise(resolve =>
-      this._makeRequest('postSession').then(response => {
-        this.params.session = response.session;
-        this.params.lifespan = response.lifespan;
-        resolve(response);
-      })
+    return new Promise((resolve, reject) => {
+      this._makeRequest('postSession')
+        .then(response => {
+          this._resetSessionParams(response.session, response.lifespan);
+          resolve();
+        })
+        .catch(error => { console.log('throw _createSession'); reject(error); })
+    }
     );
+  }
+
+  _updateSession() {
+    return new Promise(resolve =>
+      this._makeRequest('postStatus').then(status => this._prolongateSession())
+    );
+  }
+
+  _prolongateSession() {
+    this._resetSessionParams(this.params.session, this.params.sessionLifespan);
+  }
+
+  _resetSessionParams(session, lifespan) {
+    if (session != this.params.session) {
+      this.hintsCache = {};
+    }
+
+    this.params.session = session;
+    this.params.sessionLifespan = lifespan;
+    this.params.sessionValidUntil = Date.now() + lifespan * 1000;
   }
 
   _fillRawFragmentsWithHints(rawFragments) {
@@ -103,6 +157,7 @@ class nodeGlvrd {
     };
 
     return new Promise((resolve, reject) => {
+
       if (uncachedHints.length === 0) {
         return resolve(fillFragmentsWithHintFromCache(rawFragments));
       }
