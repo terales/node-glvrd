@@ -31,6 +31,10 @@ var glvrd = new nodeGlvrd('Super-duper/1.0');
 * GreatPlugin/0.2.3beta
 * Example/0.1 (http://example.ru)
 
+### `glvrd.checkStatus()`
+
+Проверит статус сервера Главреда, используйте только в разработке. Все сетевые ошибки `node-glvrd` вернет в виде исключений (например, 500-й код http-ответа) или корректно обработает. 
+
 ## Лицензия
 
 MIT © [Aleksander Terekhov](http://terales.info)
