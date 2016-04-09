@@ -87,6 +87,28 @@ test('should use cached hints for proofread test', t => {
     );
 });
 
-test.todo('Implement clearing hints cache on session update');
+test.todo('should create session if there is no session key');
 
-test.todo('Write tests for corner cases described in API documentation');
+test.todo('should create session if session key is outdated');
+
+test.todo('should clear hints cache on session key update');
+
+test.todo('should make several proofread requests for very long text');
+
+test.todo('should make several hints requests if we need more then permitted for single request');
+
+test.todo('should throw error if error received in generic request answer');
+
+test.todo('should throw error if there is no correct json object');
+
+test.todo('should throw error if there is empty response');
+
+test.todo('should throw error if there is no answer more that timeout');
+
+test.todo('should retry request if glvrd is busy');
+
+test.todo('should retry request if there was too mane requests sent');
+
+test.todo('should update session key if there is error about it from glvrd');
+
+test.todo('should throw error if http response code is in 400-500 group');
