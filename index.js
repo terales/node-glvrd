@@ -33,12 +33,48 @@ class nodeGlvrd {
   }
 
   proofread(text) {
-
     return new Promise((resolve, reject) => {
       this._makeRequest('postProofread', 'text=' + text)
         .then(rawFragments    => this._fillRawFragmentsWithHints(rawFragments.fragments))
         .then(filledFragments => resolve(filledFragments))
         .catch(error => { console.log('proofread throw'); reject(error); });
+    });
+  }
+
+  _fillRawFragmentsWithHints(rawFragments) {
+    var uncachedHints = [];
+
+    rawFragments.forEach(fragment => this.hintsCache.hasOwnProperty(fragment.hint_id) ? false : uncachedHints.push(fragment.hint_id));
+
+    var fillFragmentsWithHintFromCache = fragments => {
+      return fragments.splice().map(fragment => {
+        let { name, description } = this.hintsCache[fragment.hint_id];
+
+        fragment.hint = {
+          id: fragment.hint_id,
+          name: name,
+          description: description
+        };
+
+        delete fragment.hint_id;
+        return fragment;
+      });
+    };
+
+    return new Promise(resolve => {
+
+      if (uncachedHints.length === 0) {
+        return resolve(fillFragmentsWithHintFromCache(rawFragments));
+      }
+
+      let uncachedHintIds = {};
+      uncachedHints.forEach(hintId => uncachedHintIds[hintId] = null);
+
+      this._makeRequest('postHints', 'ids=' + Object.keys(uncachedHintIds).join(','))
+        .then(response => {
+          Object.assign(this.hintsCache, response.hints);
+          resolve(fillFragmentsWithHintFromCache(rawFragments));
+        });
     });
   }
 
@@ -76,7 +112,7 @@ class nodeGlvrd {
 
         return responseBody;
       })
-      .catch(error => { console.log('throw _makeRequest'); throw error; });
+      .catch(error => { console.log('throw _makeRequest:', endpointKey, body); throw error; });
   }
 
   _checkSessionBeforeRequest() {
@@ -134,43 +170,6 @@ class nodeGlvrd {
     this.params.session = session;
     this.params.sessionLifespan = lifespan;
     this.params.sessionValidUntil = Date.now() + lifespan * 1000;
-  }
-
-  _fillRawFragmentsWithHints(rawFragments) {
-    var uncachedHints = [];
-
-    rawFragments.forEach(fragment => this.hintsCache.hasOwnProperty(fragment.hint_id) ? false : uncachedHints.push(fragment.hint_id));
-
-    var fillFragmentsWithHintFromCache = (fragments) => {
-      return fragments.map(fragment => {
-        let { name, description } = this.hintsCache[fragment.hint_id];
-
-        fragment.hint = {
-          id: fragment.hint_id,
-          name: name,
-          description: description
-        };
-
-        delete fragment.hint_id;
-        return fragment;
-      });
-    };
-
-    return new Promise((resolve, reject) => {
-
-      if (uncachedHints.length === 0) {
-        return resolve(fillFragmentsWithHintFromCache(rawFragments));
-      }
-
-      let uncachedHintIds = {};
-      uncachedHints.forEach(hintId => uncachedHintIds[hintId] = null);
-
-      this._makeRequest('postHints', 'ids=' + Object.keys(uncachedHintIds).join(','))
-        .then(response => {
-          Object.assign(this.hintsCache, response.hints);
-          resolve(fillFragmentsWithHintFromCache(rawFragments));
-        });
-    });
   }
 }
 
