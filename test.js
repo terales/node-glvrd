@@ -43,7 +43,7 @@ test('should create session and save session id & lifespan value', t => {
   });
 });
 
-test('should proofread text and save hints to cache', t => {
+test('should create session, proofread text and save hints to cache', t => {
   var postSession   = endpointsSpec.endpoints.postSession;
   var postProofread = endpointsSpec.endpoints.postProofread;
   var postHints     = endpointsSpec.endpoints.postHints;
@@ -93,9 +93,17 @@ test('should use cached hints for proofread test', t => {
     );
 });
 
-test.todo('should create session if there is no session key on proofread');
+test('should extend session on any post request', t => {
+  var postStatus  = endpointsSpec.endpoints.postStatus;
+  t.context.catchExpectedRequest(postStatus);
 
-test.todo('should prolongate session on any post request');
+  var sessionFixture = endpointsSpec.endpoints.postSession.responseExample;
+  t.context.glvrd._resetSessionParams(sessionFixture.session, sessionFixture.lifespan);
+  var initialSessionValidUntil =  t.context.glvrd.params.sessionValidUntil;
+
+  return t.context.glvrd._makeRequest('postStatus')
+    .then(() => t.true(t.context.glvrd.params.sessionValidUntil > initialSessionValidUntil));
+});
 
 test.todo('should create session if session key is outdated');
 
@@ -120,5 +128,7 @@ test.todo('should retry request if there was too mane requests sent');
 test.todo('should update session key if there is error about it from glvrd');
 
 test.todo('should throw error if http response code is in 400-500 group');
+
+test.todo('should accept empty response on proofread');
 
 test.todo('switch from functional to unit tests');

@@ -71,7 +71,7 @@ class nodeGlvrd {
       })
       .then(responseBody => {
         if (endpoint.method == 'post') {
-          this._prolongateSession();
+          this._extendSession();
         }
 
         return responseBody;
@@ -118,11 +118,11 @@ class nodeGlvrd {
 
   _updateSession() {
     return new Promise(resolve =>
-      this._makeRequest('postStatus').then(status => this._prolongateSession())
+      this._makeRequest('postStatus').then(status => this._extendSession())
     );
   }
 
-  _prolongateSession() {
+  _extendSession() {
     this._resetSessionParams(this.params.session, this.params.sessionLifespan);
   }
 
