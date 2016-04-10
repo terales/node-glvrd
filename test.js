@@ -2,6 +2,7 @@
 
 import test from 'ava';
 import nock from 'nock';
+import sinon from 'sinon';
 import nodeGlvrd from './index';
 import endpointsSpec from './endpointsSpec.js';
 
@@ -105,7 +106,15 @@ test('should extend session on any post request', t => {
     .then(() => t.true(t.context.glvrd.params.sessionValidUntil > initialSessionValidUntil));
 });
 
-test.todo('should create session if session key is outdated');
+test('should create new session if session key is outdated', t => {
+  let createSessionStub = sinon.stub(t.context.glvrd, '_createSession');
+  createSessionStub.returns(Promise.resolve());
+
+  t.context.glvrd._resetSessionParams('sessionKey', 0); // our key will be ok for current timestamp only
+  t.context.glvrd._checkSessionBeforeRequest();
+
+  t.true(createSessionStub.called);
+});
 
 test.todo('should clear hints cache on session key update');
 
