@@ -1,23 +1,35 @@
-# node-glvrd
+# node-glvrd - WIP (разрабатывается, пользоваться нельзя)
+
+Библиотека для подключения ко второй версии [API Главреда](https://glvrd.ru/api/). Берет на себя детали реализации, вам останется только подключить ее в node-приложение. Пока работает только для серверов.
 
 [![NPM version][npm-image]][npm-url]
 [![Build Status][travis-image]][travis-url]
 [![Coveralls Status][coveralls-image]][coveralls-url]
 [![Dependency Status][depstat-image]][depstat-url]
+[![MIT License][license-image]][license-image]
 
-> 
+```js
+import nodeGlvrd from 'node-glvrd';
+var glvrd = new nodeGlvrd('Your app name/1.0');
+
+glvrd.proofread('Текст!!!').then(fragments => console.log(fragments));
+
+// Result:
+{
+    start: 1,
+    end: 2,
+    hint: {
+        id: 'r123456789',
+        name: 'Многократное восклицание',
+        description: 'Никогда не используйте более одного восклицательного знака подряд.'
+    }
+}
+```
+
 
 ## Установка
 
     npm install --save node-glvrd
-
-## Использование
-
-```js
-import nodeGlvrd from 'node-glvrd';
-
-var glvrd = new nodeGlvrd('Super-duper/1.0');
-```
 
 ## API
 
@@ -61,3 +73,6 @@ var postcss = require('postcss');
 
 [depstat-url]: https://david-dm.org/terales/node-glvrd
 [depstat-image]: https://david-dm.org/terales/node-glvrd.svg?style=flat-square
+
+[license-image]: https://img.shields.io/badge/license-MIT-blue.svg
+
