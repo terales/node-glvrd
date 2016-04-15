@@ -9,47 +9,44 @@
 [![MIT License][license-image]][license-image]
 
 ```js
+// before all run: npm i -S node-glvrd
+
 import nodeGlvrd from 'node-glvrd';
 var glvrd = new nodeGlvrd('Your app name/1.0');
 
 glvrd.proofread('Текст!!!').then(fragments => console.log(fragments));
 
 // Result:
-{
-    start: 1,
-    end: 2,
-    hint: {
-        id: 'r123456789',
-        name: 'Многократное восклицание',
-        description: 'Никогда не используйте более одного восклицательного знака подряд.'
-    }
-}
+[
+    {
+        start: 1,
+        end: 2,
+        hint: {
+            id: 'r123456789',
+            name: 'Многократное восклицание',
+            description: 'Никогда не используйте более одного восклицательного знака подряд.'
+        }
+    },
+    …
+]
 ```
-
-
-## Установка
-
-    npm install --save node-glvrd
 
 ## API
 
 ### `new nodeGlvrd(appName)`
 
-#### `appName` <sup>(обязательный, строка)</sup>
-
-Заранее регистрировать appName не нужно, выбирайте любой разумный вариант. Предлагаемый формат и примеры значений:
-
-* Super-duper/1.0
-* GreatPlugin/0.2.3beta
-* Example/0.1 (http://example.ru)
+`appName` <sup>(обязательный, строка)</sup>. Заранее регистрировать `appName` не нужно, выбирайте любой разумный вариант. Предлагаемый формат и примеры значений: `Super-duper/1.0`, `GreatPlugin/0.2.3beta`, `Example/0.1 (http://example.ru)`
 
 ### `glvrd.checkStatus()`
 
-Проверит статус сервера Главреда, используйте только в разработке. Все сетевые ошибки `node-glvrd` вернет в виде исключений (например, 500-й код http-ответа) или корректно обработает. 
+Проверит статус сервера Главреда, явно используйте только в разработке. Все сетевые ошибки `node-glvrd` вернет в виде исключений (например, 500-й код http-ответа) или корректно обработает.
+ 
+### `glvrd.proofread(text)`
 
-## Лицензия
+## Требования
 
-MIT © [Aleksander Terekhov](http://terales.info)
+* [Node.js][node] 0.10+ (нужно проверить, тестируем на 4 и 5),
+* [npm][npm] (устанавливается автоматически вместе с Node.js)
 
 ### Работа в Node.js 0.10
 
@@ -60,7 +57,11 @@ require('es6-promise').polyfill();
 var postcss = require('postcss');
 ```
 
-[полифил Promise]: https://github.com/jakearchibald/es6-promise
+## Лицензия
+
+MIT © [Aleksander Terekhov](http://terales.info)
+
+
 
 [npm-url]: https://npmjs.org/package/node-glvrd
 [npm-image]: https://img.shields.io/npm/v/node-glvrd.svg?style=flat-square
@@ -76,3 +77,7 @@ var postcss = require('postcss');
 
 [license-image]: https://img.shields.io/badge/license-MIT-blue.svg
 
+[полифил Promise]: https://github.com/jakearchibald/es6-promise
+
+[node]: https://nodejs.org/
+[npm]: https://www.npmjs.com/
