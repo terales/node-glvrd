@@ -96,7 +96,12 @@ test('request uncached hints while several already cached', t => {
     });
 });
 
-test.todo('should accept empty response on proofread');
+test.only('should accept empty response on proofread', t => {
+  let _makeRequestStub = sinon.stub(t.context.glvrd, '_makeRequest');
+  _makeRequestStub.returns(Promise.resolve({ status: 'ok', fragments: [] }));
+
+  t.context.glvrd.proofread('dummy text').then(fragments => t.is(fragments, []));
+});
 
 test.todo('should make several hints requests if we need more then permitted for single request');
 
