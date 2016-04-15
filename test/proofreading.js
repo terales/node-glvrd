@@ -96,13 +96,29 @@ test('request uncached hints while several already cached', t => {
     });
 });
 
-test.only('should accept empty response on proofread', t => {
+test('should accept empty response on proofread', t => {
   let _makeRequestStub = sinon.stub(t.context.glvrd, '_makeRequest');
   _makeRequestStub.returns(Promise.resolve({ status: 'ok', fragments: [] }));
 
   t.context.glvrd.proofread('dummy text').then(fragments => t.is(fragments, []));
 });
 
-test.todo('should make several hints requests if we need more then permitted for single request');
+test('should make several hints requests if we have more then permitted for single request', t => {
+  let rawFragments = endpointsSpec.endpoints.postProofread.responseExample.fragments;
+  t.context.glvrd.params.maxHintsCount = 2;
+
+  let _makeRequestStub = sinon.stub(t.context.glvrd, '_makeRequest');
+  _makeRequestStub.returns(Promise.resolve({ status: 'ok', hints: [ '1' ] }));
+
+  let _fillFragmentsWithHintFromCacheStub = sinon.stub(t.context.glvrd, '_fillFragmentsWithHintFromCache');
+  _fillFragmentsWithHintFromCacheStub.returns(Promise.resolve());
+
+  t.context.glvrd
+    ._fillRawFragmentsWithHints(rawFragments)
+    .then(() => {
+      t.is(_makeRequestStub.callCount, 4);
+      t.is(t.context.glvrd.hintsCache, [ '1', '1', '1', '1' ]); // from _makeRequestStub returns × callCount
+    });
+});
 
 test.todo('should make several proofread requests for very long text');
