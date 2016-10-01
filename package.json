@@ -14,7 +14,7 @@
     "coveralls": "coveralls < coverage/lcov.info",
     "test:ava": "ava",
     "test": "npm-run-all codestyle test:ava",
-    "tdd": "npm test -- --watch",
+    "tdd": "ava --watch",
     "clean": "rimraf coverage",
     "push": "git push --follow-tags",
     "postpublish": "npm-run-all clean push",
