@@ -3,12 +3,13 @@
 Библиотека для подключения ко второй версии [API Главреда](https://glvrd.ru/api/). Берет на себя детали реализации, вам останется только подключить ее в node-приложение. Работает только для серверов.
 
 [![NPM version][npm-image]][npm-url]
-[![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg?style=flat-square)](https://github.com/semantic-release/semantic-release)
+[![Known Vulnerabilities][vulnerabilities-image]][vulnerabilities-url]
+[![semantic-release][semantic-image]][semantic-url]
 
 [![Build Status][travis-image]][travis-url]
 [![Coveralls Status][coveralls-image]][coveralls-url]
 [![Dependency Status][depstat-image]][depstat-url]
-[![JavaScript Style Guide][style-image]][style-url]
+
 
 ```js
 // before all run: npm i -S node-glvrd
@@ -49,6 +50,8 @@ glvrd.proofread('Текст!!!').then(fragments => console.log(fragments));
 
 * [Node.js][node] 6 (более ранние версии зарабоютчерез Babel, а для 0.10 добавить [полифил Promise])
 
+## Помощь [![JavaScript Style Guide][style-image]][style-url]
+
 ## Лицензия
 
 MIT © [Aleksander Terekhov](http://terales.info)
@@ -76,3 +79,9 @@ MIT © [Aleksander Terekhov](http://terales.info)
 
 [style-url]: http://standardjs.com/
 [style-image]: https://img.shields.io/badge/code%20style-standard-brightgreen.svg
+
+[semantic-url]: https://github.com/semantic-release/semantic-release
+[semantic-image]: https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg?style=flat-square
+
+[vulnerabilities-url]: https://snyk.io/test/github/terales/node-glvrd
+[vulnerabilities-image]: https://snyk.io/test/github/terales/node-glvrd/badge.svg
