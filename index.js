@@ -36,45 +36,50 @@ nodeGlvrd.prototype.checkStatus = async(function () {
   return response
 })
 
-nodeGlvrd.prototype.proofread = function (text) {
-  return new Promise((resolve, reject) => {
-    this._makeRequest('postProofread', 'text=' + text)
-      .then(rawFragments => this._fillRawFragmentsWithHints(rawFragments.fragments))
-      .then(filledFragments => resolve(filledFragments))
-      .catch(error => {
-        console.log('proofread throw')
-        reject(error)
-      })
-  })
-}
+nodeGlvrd.prototype.proofread = async(function (text, callback) {
+  try {
+    let fragmentsWithoutHints = await(this._makeRequest('postProofread', 'text=' + text))
+    let fragmentsWithHints = await (this._fillRawFragmentsWithHints(fragmentsWithoutHints.fragments))
 
-nodeGlvrd.prototype._fillRawFragmentsWithHints = function (rawFragments) {
-  var uncachedHints = []
+    if (!callback) return fragmentsWithHints
+    callback(null, fragmentsWithHints)
+  } catch (err) {
+    if (!callback) throw err
+    callback(err, null)
+  }
+})
 
+nodeGlvrd.prototype._fillRawFragmentsWithHints = async(function (rawFragments) {
+
+  // Check which hints already chached
+  let uncachedHints = []
   rawFragments.forEach(fragment => this.hintsCache.hasOwnProperty(fragment.hint_id) ? false : uncachedHints.push(fragment.hint_id))
 
-  return new Promise(resolve => {
-    if (uncachedHints.length === 0) {
-      return resolve(this._fillFragmentsWithHintFromCache(rawFragments))
-    }
+  // Early return if all our hints are cached
+  if (uncachedHints.length === 0) {
+    return await(this._fillFragmentsWithHintFromCache(rawFragments))
+  }
 
-    let uncachedHintIds = {}
-    uncachedHints.forEach(hintId => { uncachedHintIds[hintId] = null })
+  // Remove duplicate hints
+  let uncachedHintIds = {}
+  uncachedHints.forEach(hintId => { uncachedHintIds[hintId] = null })
 
-    let hintRequests = []
-    this._chunkArray(Object.keys(uncachedHintIds), this.params.maxHintsCount).forEach(uncachedHintIdsChunk => {
+  // Query for uncached hints by chanks -- amount of hints in a singl request is limited
+  let hintRequests = []
+  this._chunkArray(Object.keys(uncachedHintIds), this.params.maxHintsCount)
+    .forEach(uncachedHintIdsChunk =>
       hintRequests.push(this._makeRequest('postHints', 'ids=' + uncachedHintIdsChunk.join(',')))
-    })
+    )
 
-    Promise.all(hintRequests)
-      .then(responses => {
-        let hints = []
-        responses.forEach(response => hints.concat(response.hints))
-        Object.assign(this.hintsCache, hints)
-        resolve(this._fillFragmentsWithHintFromCache(rawFragments))
-      })
-  })
-}
+  let hintResposes = await(Promise.all(hintRequests))
+
+  // Fill cache with new hints
+  let hints = []
+  hintResposes.forEach(response => hints.concat(response.hints))
+  Object.assign(this.hintsCache, hints)
+
+  return this._fillFragmentsWithHintFromCache(rawFragments)
+})
 
 nodeGlvrd.prototype._fillFragmentsWithHintFromCache = function (fragments) {
   return fragments.splice().map(fragment => {
@@ -91,67 +96,51 @@ nodeGlvrd.prototype._fillFragmentsWithHintFromCache = function (fragments) {
   })
 }
 
-nodeGlvrd.prototype._makeRequest = function (endpointKey, body, isJson = true) {
-  var endpoint = endpointsSpec.endpoints[endpointKey]
+nodeGlvrd.prototype._makeRequest = async(function (endpointKey, body, isJson = true) {
+  let endpoint = endpointsSpec.endpoints[endpointKey]
+  let weNeedSessionForRequest = endpoint.queryParams.includes('session')
 
-  return new Promise((resolve, reject) => {
-    if (endpoint.queryParams.indexOf('session') === -1) {
-      return resolve()
-    }
+  if (weNeedSessionForRequest) {
+    await(this._checkSessionBeforeRequest())
+  }
 
-    this._checkSessionBeforeRequest()
-        .then(() => resolve())
-        .catch(error => {
-          console.log('after _checkSessionBeforeRequest throw')
-          reject(error)
-        })
-  })
-    .then(() => this._fillQueryParams(endpoint.queryParams))
-    .then(queryParams => {
-      let options = {
-        method: endpoint.method,
-        uri: endpoint.name,
-        qs: queryParams,
-        json: isJson
-      }
+  // Prepare request
+  let queryParams =  this._fillQueryParams(endpoint.queryParams)
+  let options = {
+    method: endpoint.method,
+    uri: endpoint.name,
+    qs: queryParams,
+    json: isJson
+  }
 
-      if (body) {
-        options.body = body
-      }
+  if (body) {
+    options.body = body
+  }
 
-      return this.req(options)
-    })
-    .then(responseBody => {
-      if (responseBody.hasOwnProperty('status') && responseBody.status === 'error') {
-        throw responseBody
-      }
+  // Make request
+  let responseBody = this.req(options)
 
-      if (endpoint.method === 'post') {
-        this._extendSession()
-      }
+  // Check request response
+  if (responseBody.status && responseBody.status === 'error') {
+    throw responseBody
+  }
 
-      return responseBody
-    })
-    .catch(error => {
-      console.log('throw _makeRequest:', endpointKey, body)
-      throw error
-    })
-}
+  if (endpoint.method === 'post') {
+    this._extendSession() // Every POST request extends session
+  }
 
-nodeGlvrd.prototype._checkSessionBeforeRequest = function () {
-  return new Promise((resolve, reject) => {
-    if (!this.params.session || this.params.sessionValidUntil < (Date.now() + 1000)) {
-      return this._createSession()
-        .then(() => resolve())
-        .catch(error => {
-          console.log('_checkSessionBeforeRequest throw')
-          reject(error)
-        })
-    }
+  return responseBody
+})
 
-    resolve()
-  })
-}
+nodeGlvrd.prototype._checkSessionBeforeRequest = async(function () {
+  let isSessionValid =  this.params.sessionValidUntil > (Date.now() + 1000)
+
+  if (this.params.session && isSessionValid) {
+    return
+  }
+
+  await(this._createSession())
+})
 
 nodeGlvrd.prototype._fillQueryParams = function (endpointQueryParams) {
   let queryParams = {}
@@ -165,25 +154,15 @@ nodeGlvrd.prototype._fillQueryParams = function (endpointQueryParams) {
   return queryParams
 }
 
-nodeGlvrd.prototype._createSession = function () {
-  return new Promise((resolve, reject) => {
-    this._makeRequest('postSession')
-      .then(response => {
-        this._resetSessionParams(response.session, response.lifespan)
-        resolve()
-      })
-      .catch(error => {
-        console.log('throw _createSession')
-        reject(error)
-      })
-  })
-}
+nodeGlvrd.prototype._createSession = async(function () {
+  let response = await(this._makeRequest('postSession'))
+  this._resetSessionParams(response.session, response.lifespan)
+})
 
-nodeGlvrd.prototype._updateSession = function () {
-  return new Promise(resolve =>
-    this._makeRequest('postStatus').then(status => this._extendSession())
-  )
-}
+nodeGlvrd.prototype._updateSession = async(function () {
+  await(this._makeRequest('postStatus'))
+  this._extendSession()
+})
 
 nodeGlvrd.prototype._extendSession = function () {
   this._resetSessionParams(this.params.session, this.params.sessionLifespan)
