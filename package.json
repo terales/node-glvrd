@@ -13,11 +13,11 @@
     "precoveralls": "npm run coverage",
     "coveralls": "coveralls < coverage/lcov.info",
     "test:ava": "ava",
-    "test": "run-p codestyle test:ava",
+    "test": "npm-run-all codestyle test:ava",
     "tdd": "npm test -- --watch",
     "clean": "rimraf coverage",
     "push": "git push --follow-tags",
-    "postpublish": "run-p clean push",
+    "postpublish": "npm-run-all clean push",
     "release": "semantic-release pre && npm publish && semantic-release post"
   },
   "repository": {
@@ -33,9 +33,9 @@
   "homepage": "https://github.com/TerAleS/node-glvrd#readme",
   "devDependencies": {
     "ava": "^0.16.0",
-    "commitizen": "2.8.6",
+    "commitizen": "^2.8.6",
     "coveralls": "^2.11.8",
-    "cz-conventional-changelog": "1.2.0",
+    "cz-conventional-changelog": "^1.2.0",
     "nock": "^7.7.2",
     "npm-run-all": "^1.5.1",
     "nyc": "^6.0.0",
