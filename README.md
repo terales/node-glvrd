@@ -1,12 +1,12 @@
 # node-glvrd - WIP (разрабатывается, пользоваться нельзя)
 
-Библиотека для подключения ко второй версии [API Главреда](https://glvrd.ru/api/). Берет на себя детали реализации, вам останется только подключить ее в node-приложение. Пока работает только для серверов.
+Библиотека для подключения ко второй версии [API Главреда](https://glvrd.ru/api/). Берет на себя детали реализации, вам останется только подключить ее в node-приложение. Работает только для серверов.
 
 [![NPM version][npm-image]][npm-url]
 [![Build Status][travis-image]][travis-url]
 [![Coveralls Status][coveralls-image]][coveralls-url]
 [![Dependency Status][depstat-image]][depstat-url]
-[![MIT License][license-image]][license-image]
+[![JavaScript Style Guide][style-image]][style-url]
 
 ```js
 // before all run: npm i -S node-glvrd
@@ -40,7 +40,7 @@ glvrd.proofread('Текст!!!').then(fragments => console.log(fragments));
 ### `glvrd.checkStatus()`
 
 Проверит статус сервера Главреда, явно используйте только в разработке. Все сетевые ошибки `node-glvrd` вернет в виде исключений (например, 500-й код http-ответа) или корректно обработает.
- 
+
 ### `glvrd.proofread(text)`
 
 ## Требования
@@ -81,3 +81,6 @@ MIT © [Aleksander Terekhov](http://terales.info)
 
 [node]: https://nodejs.org/
 [npm]: https://www.npmjs.com/
+
+[style-url]: http://standardjs.com/
+[style-image]: https://img.shields.io/badge/code%20style-standard-brightgreen.svg
