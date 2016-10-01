@@ -18,7 +18,7 @@
     "clean": "rimraf coverage",
     "push": "git push --follow-tags",
     "postpublish": "npm-run-all clean push",
-    "release": "semantic-release pre && npm publish && semantic-release post"
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
   "repository": {
     "type": "git",
