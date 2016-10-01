@@ -3,6 +3,8 @@
 Библиотека для подключения ко второй версии [API Главреда](https://glvrd.ru/api/). Берет на себя детали реализации, вам останется только подключить ее в node-приложение. Работает только для серверов.
 
 [![NPM version][npm-image]][npm-url]
+[![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg?style=flat-square)](https://github.com/semantic-release/semantic-release)
+
 [![Build Status][travis-image]][travis-url]
 [![Coveralls Status][coveralls-image]][coveralls-url]
 [![Dependency Status][depstat-image]][depstat-url]
@@ -45,17 +47,7 @@ glvrd.proofread('Текст!!!').then(fragments => console.log(fragments));
 
 ## Требования
 
-* [Node.js][node] 0.10+ (нужно проверить, тестируем на 4 и 5),
-* [npm][npm] (устанавливается автоматически вместе с Node.js)
-
-### Работа в Node.js 0.10
-
-Для запуска в приложении под Node.js 0.10, нужно добавить [полифил Promise]:
-
-```js
-require('es6-promise').polyfill();
-var postcss = require('postcss');
-```
+* [Node.js][node] 6 (более ранние версии зарабоютчерез Babel, а для 0.10 добавить [полифил Promise])
 
 ## Лицензия
 

@@ -1,26 +1,28 @@
 {
   "name": "node-glvrd",
-  "version": "0.0.1",
+  "version": "0.0.0-semantic-release",
   "description": "Nodejs wrapper for glvrd.ru API",
   "main": "index.js",
   "files": [
     "index.js"
   ],
   "scripts": {
+    "commit": "git-cz",
     "codestyle": "snazzy --verbose",
     "coverage": "nyc -r=text -r=lcov npm test",
     "precoveralls": "npm run coverage",
     "coveralls": "coveralls < coverage/lcov.info",
     "test:ava": "ava",
-    "test": "npm-run-all codestyle test:ava",
+    "test": "run-p codestyle test:ava",
     "tdd": "npm test -- --watch",
     "clean": "rimraf coverage",
     "push": "git push --follow-tags",
-    "postpublish": "npm-run-all clean push"
+    "postpublish": "run-p clean push",
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/TerAleS/node-glvrd.git"
+    "url": "https://github.com/TerAleS/node-glvrd.git"
   },
   "keywords": [],
   "author": "Aleksander Terekhov <www.terales.info> (http://terales.info)",
@@ -31,15 +33,26 @@
   "homepage": "https://github.com/TerAleS/node-glvrd#readme",
   "devDependencies": {
     "ava": "^0.16.0",
+    "commitizen": "2.8.6",
     "coveralls": "^2.11.8",
-    "standard": "^8.3.0",
+    "cz-conventional-changelog": "1.2.0",
     "nock": "^7.7.2",
     "npm-run-all": "^1.5.1",
     "nyc": "^6.0.0",
     "rimraf": "^2.5.2",
-    "sinon": "^1.17.3"
+    "semantic-release": "^6.3.0",
+    "sinon": "^1.17.3",
+    "standard": "^8.3.0"
   },
   "dependencies": {
     "request-promise": "^2.0.1"
+  },
+  "commitizen": {
+    "path": "cz-conventional-changelog"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }
