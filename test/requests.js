@@ -11,15 +11,19 @@ test.beforeEach(t => {
   t.context.fakeServer = nock(endpointsSpec.baseUrl)
   nock.disableNetConnect()
 
-  t.context.catchExpectedRequest = function (endpoint) {
+  t.context.catchExpectedRequest = function (endpoint, replyCode = 200) {
     t.context
       .fakeServer[endpoint.method](endpoint.name)
       .query(endpoint.queryExample)
-      .reply(200, endpoint.responseExample)
+      .reply(replyCode, endpoint.responseExample)
   }
 })
 
-test.todo('should throw error if http response code is not in 200 group')
+test('should throw error if http response code is not in 200 group', t => {
+  let getStatusEndpoint = endpointsSpec.endpoints.getStatus
+  t.context.catchExpectedRequest(getStatusEndpoint, 500)
+  return t.throws(t.context.glvrd.checkStatus(), Error)
+})
 
 test.todo('should retry request if there was too mane requests sent')
 
