@@ -42,11 +42,11 @@
     "rimraf": "^2.5.2",
     "semantic-release": "^6.3.0",
     "sinon": "^1.17.3",
-    "standard": "^8.3.0"
+    "standard": "^8.3.0",
+    "snazzy": "5.0.0"
   },
   "dependencies": {
-    "request-promise": "^2.0.1",
-    "snazzy": "5.0.0"
+    "request-promise": "^2.0.1"
   },
   "commitizen": {
     "path": "cz-conventional-changelog"
