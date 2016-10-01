@@ -1,6 +1,9 @@
 'use strict'
 
 const request = require('request-promise-native')
+const async = require('asyncawait/async')
+const await = require('asyncawait/await')
+
 const endpointsSpec = require('./endpointsSpec')
 
 class nodeGlvrd {
