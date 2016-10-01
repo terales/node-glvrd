@@ -46,6 +46,7 @@
     "snazzy": "5.0.0"
   },
   "dependencies": {
+    "asyncawait": "^1.0.6",
     "request": "^2.75.0",
     "request-promise-native": "^1.0.3"
   },
