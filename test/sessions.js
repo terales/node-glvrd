@@ -1,24 +1,13 @@
 'use strict'
 
 const test = require('ava')
-const nock = require('nock')
 const sinon = require('sinon')
+const initFakeServer = require('./_initFakeServer')
 
 const NodeGlvrd = require('../index')
 const endpointsSpec = require('../endpointsSpec')
 
-test.beforeEach(t => {
-  t.context.glvrd = new NodeGlvrd('testApp')
-  t.context.fakeServer = nock(endpointsSpec.baseUrl)
-  nock.disableNetConnect()
-
-  t.context.catchExpectedRequest = function (endpoint) {
-    t.context
-      .fakeServer[endpoint.method](endpoint.name)
-      .query(endpoint.queryExample)
-      .reply(200, endpoint.responseExample)
-  }
-})
+test.beforeEach(initFakeServer)
 
 test('should create session and save session id & lifespan value', t => {
   var postSession = endpointsSpec.endpoints.postSession

@@ -1,23 +1,11 @@
 'use strict'
 
 const test = require('ava')
-const nock = require('nock')
+const initFakeServer = require('./_initFakeServer')
 
-const NodeGlvrd = require('../index')
 const endpointsSpec = require('../endpointsSpec')
 
-test.beforeEach(t => {
-  t.context.glvrd = new NodeGlvrd('testApp')
-  t.context.fakeServer = nock(endpointsSpec.baseUrl)
-  nock.disableNetConnect()
-
-  t.context.catchExpectedRequest = function (endpoint, replyCode = 200) {
-    t.context
-      .fakeServer[endpoint.method](endpoint.name)
-      .query(endpoint.queryExample)
-      .reply(replyCode, endpoint.responseExample)
-  }
-})
+test.beforeEach(initFakeServer)
 
 test('should throw error if http response code is not in 200 group', t => {
   let getStatusEndpoint = endpointsSpec.endpoints.getStatus
