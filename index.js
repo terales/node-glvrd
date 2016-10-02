@@ -41,7 +41,9 @@ nodeGlvrd.prototype.checkStatus = _async(function () {
 nodeGlvrd.prototype.proofread = _async(function (text, callback) {
   try {
     let fragmentsWithoutHints = _await(this._makeRequest('postProofread', 'text=' + text))
-    let fragmentsWithHints = _await(this._fillRawFragmentsWithHints(fragmentsWithoutHints.fragments))
+    let fragmentsWithHints = fragmentsWithoutHints.fragments.length
+      ? _await(this._fillRawFragmentsWithHints(fragmentsWithoutHints.fragments))
+      : []
 
     if (!callback) return fragmentsWithHints
     callback(null, fragmentsWithHints)
@@ -123,7 +125,13 @@ nodeGlvrd.prototype._makeRequest = _async(function (endpointKey, body, isJson = 
 
   // Check request response
   if (responseBody.status && responseBody.status === 'error') {
-    throw responseBody
+    if (responseBody.code === endpointsSpec.errorsForCover.bad_session.code) {
+      // Try to update session and repeat request silently
+      _await(this._createSession())
+      responseBody = _await(this.req(options))
+    } else {
+      throw responseBody
+    }
   }
 
   if (endpoint.method === 'post') {

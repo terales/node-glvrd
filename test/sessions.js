@@ -41,6 +41,20 @@ test('should create new session if session key is outdated', t => {
   t.true(createSessionStub.called)
 })
 
-test.todo('should update session key if there is error about it from glvrd')
+test('should silently update session if received bad_session error', t => {
+  t.context.glvrd._resetSessionParams('sessionKey', 10000)
+
+  let errorFromServer = endpointsSpec.errorsForCover.bad_session
+  let requestStub = sinon.stub(t.context.glvrd, 'req')
+  requestStub.onCall(0).returns(errorFromServer)
+
+  let newSession = endpointsSpec.endpoints.postSession.responseExample
+  requestStub.onCall(1).returns(newSession)
+  requestStub.onCall(2).returns({ status: 'ok', fragments: [] })
+
+  t.context.glvrd.proofread('').then(fragmentsWithHints => {
+    t.is(t.context.glvrd.params.session, newSession.session)
+  })
+})
 
 test.todo('should clear hints cache on session key update')
