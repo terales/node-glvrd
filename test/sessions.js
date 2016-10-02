@@ -4,7 +4,6 @@ const test = require('ava')
 const sinon = require('sinon')
 const initFakeServer = require('./_initFakeServer')
 
-const NodeGlvrd = require('../index')
 const endpointsSpec = require('../endpointsSpec')
 
 test.beforeEach(initFakeServer)

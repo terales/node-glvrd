@@ -1,8 +1,8 @@
 'use strict'
 
 const request = require('request-promise-native')
-const async = require('asyncawait/async')
-const await = require('asyncawait/await')
+const _async = require('asyncawait/async')
+const _await = require('asyncawait/await')
 
 const endpointsSpec = require('./endpointsSpec')
 
@@ -27,8 +27,8 @@ function nodeGlvrd (appName) {
   // this.checkStatus() // TODO Prepare tests for such update
 }
 
-nodeGlvrd.prototype.checkStatus = async(function () {
-  let response = await (this._makeRequest('getStatus'))
+nodeGlvrd.prototype.checkStatus = _async(function () {
+  let response = _await(this._makeRequest('getStatus'))
 
   this.params.maxTextLength = response['max_text_length']
   this.params.maxHintsCount = response['max_hints_count']
@@ -36,10 +36,10 @@ nodeGlvrd.prototype.checkStatus = async(function () {
   return response
 })
 
-nodeGlvrd.prototype.proofread = async(function (text, callback) {
+nodeGlvrd.prototype.proofread = _async(function (text, callback) {
   try {
-    let fragmentsWithoutHints = await(this._makeRequest('postProofread', 'text=' + text))
-    let fragmentsWithHints = await (this._fillRawFragmentsWithHints(fragmentsWithoutHints.fragments))
+    let fragmentsWithoutHints = _await(this._makeRequest('postProofread', 'text=' + text))
+    let fragmentsWithHints = _await(this._fillRawFragmentsWithHints(fragmentsWithoutHints.fragments))
 
     if (!callback) return fragmentsWithHints
     callback(null, fragmentsWithHints)
@@ -49,15 +49,14 @@ nodeGlvrd.prototype.proofread = async(function (text, callback) {
   }
 })
 
-nodeGlvrd.prototype._fillRawFragmentsWithHints = async(function (rawFragments) {
-
+nodeGlvrd.prototype._fillRawFragmentsWithHints = _async(function (rawFragments) {
   // Check which hints already chached
   let uncachedHints = []
   rawFragments.forEach(fragment => this.hintsCache.hasOwnProperty(fragment.hint_id) ? false : uncachedHints.push(fragment.hint_id))
 
   // Early return if all our hints are cached
   if (uncachedHints.length === 0) {
-    return await(this._fillFragmentsWithHintFromCache(rawFragments))
+    return _await(this._fillFragmentsWithHintFromCache(rawFragments))
   }
 
   // Remove duplicate hints
@@ -71,7 +70,7 @@ nodeGlvrd.prototype._fillRawFragmentsWithHints = async(function (rawFragments) {
       hintRequests.push(this._makeRequest('postHints', 'ids=' + uncachedHintIdsChunk.join(',')))
     )
 
-  let hintResposes = await(Promise.all(hintRequests))
+  let hintResposes = _await(Promise.all(hintRequests))
 
   // Fill cache with new hints
   let hints = []
@@ -96,16 +95,16 @@ nodeGlvrd.prototype._fillFragmentsWithHintFromCache = function (fragments) {
   })
 }
 
-nodeGlvrd.prototype._makeRequest = async(function (endpointKey, body, isJson = true) {
+nodeGlvrd.prototype._makeRequest = _async(function (endpointKey, body, isJson = true) {
   let endpoint = endpointsSpec.endpoints[endpointKey]
   let weNeedSessionForRequest = endpoint.queryParams.includes('session')
 
   if (weNeedSessionForRequest) {
-    await(this._checkSessionBeforeRequest())
+    _await(this._checkSessionBeforeRequest())
   }
 
   // Prepare request
-  let queryParams =  this._fillQueryParams(endpoint.queryParams)
+  let queryParams = this._fillQueryParams(endpoint.queryParams)
   let options = {
     method: endpoint.method,
     uri: endpoint.name,
@@ -132,14 +131,14 @@ nodeGlvrd.prototype._makeRequest = async(function (endpointKey, body, isJson = t
   return responseBody
 })
 
-nodeGlvrd.prototype._checkSessionBeforeRequest = async(function () {
-  let isSessionValid =  this.params.sessionValidUntil > (Date.now() + 1000)
+nodeGlvrd.prototype._checkSessionBeforeRequest = _async(function () {
+  let isSessionValid = this.params.sessionValidUntil > (Date.now() + 1000)
 
   if (this.params.session && isSessionValid) {
     return
   }
 
-  await(this._createSession())
+  _await(this._createSession())
 })
 
 nodeGlvrd.prototype._fillQueryParams = function (endpointQueryParams) {
@@ -154,13 +153,13 @@ nodeGlvrd.prototype._fillQueryParams = function (endpointQueryParams) {
   return queryParams
 }
 
-nodeGlvrd.prototype._createSession = async(function () {
-  let response = await(this._makeRequest('postSession'))
+nodeGlvrd.prototype._createSession = _async(function () {
+  let response = _await(this._makeRequest('postSession'))
   this._resetSessionParams(response.session, response.lifespan)
 })
 
-nodeGlvrd.prototype._updateSession = async(function () {
-  await(this._makeRequest('postStatus'))
+nodeGlvrd.prototype._updateSession = _async(function () {
+  _await(this._makeRequest('postStatus'))
   this._extendSession()
 })
 
