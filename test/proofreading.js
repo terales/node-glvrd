@@ -135,4 +135,15 @@ test('should accept callback style', t => {
   })
 })
 
-test.todo('should make several proofread requests for very long text')
+test('should make several proofread requests for text longer than .params.maxTextLength', t => {
+  let _makeRequestStub = sinon.stub(t.context.glvrd, '_makeRequest')
+  _makeRequestStub.returns(Promise.resolve({ status: 'ok', fragments: [] }))
+
+  t.context.glvrd.params.maxTextLength = 3
+
+  t.context.glvrd.proofread('dummy text', (err, fragments) => {
+    t.falsy(err)
+    t.is(fragments, [])
+    t.is(_makeRequestStub.callCount, 4)
+  })
+})
