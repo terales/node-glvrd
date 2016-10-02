@@ -37,11 +37,3 @@ test('should throw error if glvrd is busy', t => {
   t.context.glvrd.proofread('test').catch(err =>
     t.is(err, errorFromServer))
 })
-
-test.todo('should throw error if error received in generic requests')
-
-test.todo('should throw error if there is no correct json object')
-
-test.todo('should throw error if there is empty response')
-
-test.todo('should throw error if there is no answer more that timeout')
