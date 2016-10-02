@@ -57,11 +57,14 @@ test('should silently update session if received bad_session error', t => {
   })
 })
 
-/* test.('should clear hints cache on session key update', t => {
+test('should clear hints cache on session key update', t => {
+  t.context.glvrd.params.session = 'initial-session'
   t.context.glvrd.hintsCache = { // emulate cache
     'r661353765732': { 'name': 'Сложный синтаксис', 'description': 'Упростите' },
     'r772367523480': { 'name': 'Газетный штамп', 'description': 'Манерно, попробуйте проще' }
   }
 
-  let
-}) /**/
+  t.context.glvrd._resetSessionParams('new-session', 10000)
+
+  t.is(Object.keys(t.context.glvrd.hintsCache).length, 0)
+})
