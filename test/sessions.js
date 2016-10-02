@@ -57,4 +57,11 @@ test('should silently update session if received bad_session error', t => {
   })
 })
 
-test.todo('should clear hints cache on session key update')
+/* test.('should clear hints cache on session key update', t => {
+  t.context.glvrd.hintsCache = { // emulate cache
+    'r661353765732': { 'name': 'Сложный синтаксис', 'description': 'Упростите' },
+    'r772367523480': { 'name': 'Газетный штамп', 'description': 'Манерно, попробуйте проще' }
+  }
+
+  let
+}) /**/
