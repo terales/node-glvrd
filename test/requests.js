@@ -14,7 +14,7 @@ test('should throw error if http response code is not in 200 group', t => {
   return t.throws(t.context.glvrd.checkStatus(), Error)
 })
 
-test('should give an error request if there was too many requests sent', t => {
+test('should throw error if there was too many requests sent', t => {
   /*
    * Main idea here is to empower client app with knowlendge about errors,
    * so they can provide full feedback to user instead of silently freezing
@@ -28,7 +28,15 @@ test('should give an error request if there was too many requests sent', t => {
     t.is(err, errorFromServer))
 })
 
-test.todo('should retry request if glvrd is busy')
+test('should throw error if glvrd is busy', t => {
+  let errorFromServer = endpointsSpec.errorsForCover.busy
+  let requestStub = sinon.stub(t.context.glvrd, 'req')
+  requestStub.returns(errorFromServer)
+
+  // TODO Change approach and use t.throws() instead
+  t.context.glvrd.proofread('test').catch(err =>
+    t.is(err, errorFromServer))
+})
 
 test.todo('should throw error if error received in generic requests')
 
