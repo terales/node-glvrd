@@ -1,7 +1,5 @@
 'use strict'
 
-// TODO Change to _async(function *function name*(rawFragments) for better error reports
-
 const request = require('request-promise-native')
 const _async = require('asyncawait/async')
 const _await = require('asyncawait/await')
@@ -29,7 +27,7 @@ function nodeGlvrd (appName) {
   // this.checkStatus() // TODO Prepare tests for such update
 }
 
-nodeGlvrd.prototype.checkStatus = _async(function () {
+nodeGlvrd.prototype.checkStatus = _async(function checkStatus () {
   let response = _await(this._makeRequest('getStatus'))
 
   this.params.maxTextLength = response['max_text_length']
@@ -38,7 +36,7 @@ nodeGlvrd.prototype.checkStatus = _async(function () {
   return response
 })
 
-nodeGlvrd.prototype.proofread = _async(function (text, callback) {
+nodeGlvrd.prototype.proofread = _async(function proofread (text, callback) {
   try {
     let fragmentsWithoutHints = _await(this._makeRequest('postProofread', 'text=' + text))
     let fragmentsWithHints = fragmentsWithoutHints.fragments.length
@@ -53,7 +51,7 @@ nodeGlvrd.prototype.proofread = _async(function (text, callback) {
   }
 })
 
-nodeGlvrd.prototype._fillRawFragmentsWithHints = _async(function (rawFragments) {
+nodeGlvrd.prototype._fillRawFragmentsWithHints = _async(function _fillRawFragmentsWithHints (rawFragments) {
   // Check which hints already chached
   let uncachedHints = []
   rawFragments.forEach(fragment => this.hintsCache.hasOwnProperty(fragment.hint_id) ? false : uncachedHints.push(fragment.hint_id))
@@ -84,7 +82,7 @@ nodeGlvrd.prototype._fillRawFragmentsWithHints = _async(function (rawFragments) 
   return this._fillFragmentsWithHintFromCache(rawFragments)
 })
 
-nodeGlvrd.prototype._fillFragmentsWithHintFromCache = function (fragments) {
+nodeGlvrd.prototype._fillFragmentsWithHintFromCache = function _fillFragmentsWithHintFromCache (fragments) {
   return fragments.splice().map(fragment => {
     let { name, description } = this.hintsCache[fragment.hint_id]
 
@@ -99,7 +97,7 @@ nodeGlvrd.prototype._fillFragmentsWithHintFromCache = function (fragments) {
   })
 }
 
-nodeGlvrd.prototype._makeRequest = _async(function (endpointKey, body, isJson = true) {
+nodeGlvrd.prototype._makeRequest = _async(function _makeRequest (endpointKey, body, isJson = true) {
   let endpoint = endpointsSpec.endpoints[endpointKey]
   let weNeedSessionForRequest = endpoint.queryParams.includes('session')
 
@@ -141,7 +139,7 @@ nodeGlvrd.prototype._makeRequest = _async(function (endpointKey, body, isJson = 
   return responseBody
 })
 
-nodeGlvrd.prototype._checkSessionBeforeRequest = _async(function () {
+nodeGlvrd.prototype._checkSessionBeforeRequest = _async(function _checkSessionBeforeRequest () {
   let isSessionValid = this.params.sessionValidUntil > (Date.now() + 1000)
 
   if (this.params.session && isSessionValid) {
@@ -151,7 +149,7 @@ nodeGlvrd.prototype._checkSessionBeforeRequest = _async(function () {
   _await(this._createSession())
 })
 
-nodeGlvrd.prototype._fillQueryParams = function (endpointQueryParams) {
+nodeGlvrd.prototype._fillQueryParams = function _fillQueryParams (endpointQueryParams) {
   let queryParams = {}
 
   endpointQueryParams.forEach(queryParamName => {
@@ -163,21 +161,21 @@ nodeGlvrd.prototype._fillQueryParams = function (endpointQueryParams) {
   return queryParams
 }
 
-nodeGlvrd.prototype._createSession = _async(function () {
+nodeGlvrd.prototype._createSession = _async(function _createSession () {
   let response = _await(this._makeRequest('postSession'))
   this._resetSessionParams(response.session, response.lifespan)
 })
 
-nodeGlvrd.prototype._updateSession = _async(function () {
+nodeGlvrd.prototype._updateSession = _async(function _updateSession () {
   _await(this._makeRequest('postStatus'))
   this._extendSession()
 })
 
-nodeGlvrd.prototype._extendSession = function () {
+nodeGlvrd.prototype._extendSession = function _extendSession () {
   this._resetSessionParams(this.params.session, this.params.sessionLifespan)
 }
 
-nodeGlvrd.prototype._resetSessionParams = function (session, lifespan) {
+nodeGlvrd.prototype._resetSessionParams = function _resetSessionParams (session, lifespan) {
   if (session !== this.params.session) {
     this.hintsCache = {}
   }
@@ -187,7 +185,7 @@ nodeGlvrd.prototype._resetSessionParams = function (session, lifespan) {
   this.params.sessionValidUntil = Date.now() + lifespan * 1000
 }
 
-nodeGlvrd.prototype._chunkArray = function (arr, len) {
+nodeGlvrd.prototype._chunkArray = function _chunkArray (arr, len) {
   let chunks = []
   let i = 0
   let n = arr.length
