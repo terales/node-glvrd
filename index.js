@@ -1,5 +1,7 @@
 'use strict'
 
+// TODO Change to _async(function *function name*(rawFragments) for better error reports
+
 const request = require('request-promise-native')
 const _async = require('asyncawait/async')
 const _await = require('asyncawait/await')
@@ -44,7 +46,7 @@ nodeGlvrd.prototype.proofread = _async(function (text, callback) {
     if (!callback) return fragmentsWithHints
     callback(null, fragmentsWithHints)
   } catch (err) {
-    if (!callback) throw err
+    if (!callback) throw new Error(err)
     callback(err, null)
   }
 })
@@ -117,7 +119,7 @@ nodeGlvrd.prototype._makeRequest = _async(function (endpointKey, body, isJson = 
   }
 
   // Make request
-  let responseBody = this.req(options)
+  let responseBody = _await(this.req(options))
 
   // Check request response
   if (responseBody.status && responseBody.status === 'error') {

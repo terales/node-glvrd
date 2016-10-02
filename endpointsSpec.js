@@ -81,28 +81,28 @@ module.exports = {
       }
     }
   },
-  errorsForCover: [
-    {
+  errorsForCover: {
+    busy: {
       status: 'error',
       code: 'busy',
       message: 'Главред очень занят. Попробуйте снова через 10 секунд.',
       repeat: 10
     },
-    {
+    too_many_requests: {
       status: 'error',
       code: 'too_many_requests',
       message: 'Слишком много букв. Попробуйте снова через 10 секунд.',
       repeat: 10
     },
-    {
+    obsolete: {
       status: 'error',
       code: 'obsolete',
       message: 'Плагин устарел. Спросите у разработчика новую версию.'
     },
-    {
+    bad_session: {
       status: 'error',
       code: 'bad_session',
       message: 'Попробуйте закрыть и снова открыть приложение.'
     }
-  ]
+  }
 }
