@@ -23,7 +23,7 @@ function nodeGlvrd (appName) {
 
   this.req = request.defaults({
     baseUrl: endpointsSpec.baseUrl,
-    timeout: 1000
+    timeout: 1600
   })
 
   // this.checkStatus() // TODO Prepare tests for such update
