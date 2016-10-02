@@ -50,9 +50,6 @@
     "request": "^2.75.0",
     "request-promise-native": "^1.0.3"
   },
-  "commitizen": {
-    "path": "cz-conventional-changelog"
-  },
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
