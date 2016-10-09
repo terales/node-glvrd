@@ -4,7 +4,9 @@
   "description": "Nodejs wrapper for glvrd.ru API",
   "main": "index.js",
   "files": [
-    "index.js"
+    "index.js",
+    "endpointsSpec.js",
+    "LICENSE"
   ],
   "scripts": {
     "commit": "git-cz",
