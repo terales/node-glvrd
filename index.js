@@ -23,8 +23,6 @@ function nodeGlvrd (appName) {
     baseUrl: endpointsSpec.baseUrl,
     timeout: 1600
   })
-
-  // this.checkStatus() // TODO Prepare tests for such update
 }
 
 nodeGlvrd.prototype.checkStatus = _async(function checkStatus () {
