@@ -135,6 +135,18 @@ test('should accept callback style', t => {
   })
 })
 
+test('should work throw error for callback style too', t => {
+  let errorFromServer = endpointsSpec.errorsForCover.busy
+
+  let _makeRequestStub = sinon.stub(t.context.glvrd, '_makeRequest')
+  _makeRequestStub.returns(Promise.resolve(errorFromServer))
+
+  t.context.glvrd.proofread('dummy text', (err, fragments) => {
+    t.is(err, errorFromServer)
+    t.falsy(fragments, [])
+  })
+})
+
 test('should make several proofread requests for text longer than .params.maxTextLength', t => {
   let _makeRequestStub = sinon.stub(t.context.glvrd, '_makeRequest')
   _makeRequestStub.returns(Promise.resolve({ status: 'ok', fragments: [] }))

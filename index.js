@@ -37,9 +37,11 @@ nodeGlvrd.prototype.checkStatus = _async(function checkStatus () {
 nodeGlvrd.prototype.proofread = _async(function proofread (text, callback) {
   try {
     let fragmentsWithoutHints = _await(this._makeRequest('postProofread', 'text=' + text))
-    let fragmentsWithHints = fragmentsWithoutHints.fragments.length
-      ? _await(this._fillRawFragmentsWithHints(fragmentsWithoutHints.fragments))
-      : []
+    this._checkIfServerError(fragmentsWithoutHints)
+
+    let fragmentsWithHints = []
+    fragmentsWithHints = _await(this._fillRawFragmentsWithHints(fragmentsWithoutHints.fragments))
+    this._checkIfServerError(fragmentsWithoutHints)
 
     if (!callback) return fragmentsWithHints
     callback(null, fragmentsWithHints)
@@ -126,7 +128,7 @@ nodeGlvrd.prototype._makeRequest = _async(function _makeRequest (endpointKey, bo
       _await(this._createSession())
       responseBody = _await(this.req(options))
     } else {
-      throw responseBody
+      throw new Error(responseBody)
     }
   }
 
@@ -193,6 +195,12 @@ nodeGlvrd.prototype._chunkArray = function _chunkArray (arr, len) {
   }
 
   return chunks
+}
+
+nodeGlvrd.prototype._checkIfServerError = function _checkIfServerError (functionResult) {
+  if (functionResult.status && functionResult.status == 'error') {
+    throw (functionResult)
+  }
 }
 
 module.exports = nodeGlvrd
