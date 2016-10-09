@@ -168,11 +168,6 @@ nodeGlvrd.prototype._createSession = _async(function _createSession () {
   this._resetSessionParams(response.session, response.lifespan)
 })
 
-nodeGlvrd.prototype._updateSession = _async(function _updateSession () {
-  _await(this._makeRequest('postStatus'))
-  this._extendSession()
-})
-
 nodeGlvrd.prototype._extendSession = function _extendSession () {
   this._resetSessionParams(this.params.session, this.params.sessionLifespan)
 }
