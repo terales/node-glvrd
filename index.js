@@ -198,7 +198,7 @@ nodeGlvrd.prototype._chunkArray = function _chunkArray (arr, len) {
 }
 
 nodeGlvrd.prototype._checkIfServerError = function _checkIfServerError (functionResult) {
-  if (functionResult.status && functionResult.status == 'error') {
+  if (functionResult.status && functionResult.status === 'error') {
     throw (functionResult)
   }
 }
