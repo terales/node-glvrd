@@ -11,17 +11,21 @@ test.before(t => { nock.disableNetConnect() })
 
 test.beforeEach(t => {
   t.context.glvrd = new NodeGlvrd('testApp')
+  t.context.spec = JSON.parse(JSON.stringify(endpointsSpec))
+  t.context.sandbox = sinon.sandbox.create()
 })
 
-test('proofread just after initialization', t => {
-  let postProofread = endpointsSpec.endpoints.postProofread
+test.afterEach(t => t.context.sandbox.restore())
 
-  let _makeRequestStub = sinon.stub(t.context.glvrd, '_makeRequest')
+test('proofread just after initialization', t => {
+  let postProofread = t.context.spec.endpoints.postProofread
+
+  let _makeRequestStub = t.context.sandbox.stub(t.context.glvrd, '_makeRequest')
   _makeRequestStub
     .withArgs('postProofread', 'text=' + postProofread.textExample)
     .returns(Promise.resolve(postProofread.responseExample))
 
-  let _fillRawFragmentsWithHintsStub = sinon.stub(t.context.glvrd, '_fillRawFragmentsWithHints')
+  let _fillRawFragmentsWithHintsStub = t.context.sandbox.stub(t.context.glvrd, '_fillRawFragmentsWithHints')
   let filledFragments = [ {
     start: 5,
     end: 25,
@@ -45,10 +49,10 @@ test('proofread just after initialization', t => {
 })
 
 test('use cached hints if available', t => {
-  let rawFragments = endpointsSpec.endpoints.postProofread.responseExample.fragments
-  t.context.glvrd.hintsCache = endpointsSpec.endpoints.postHints.responseExample.hints // emulate caches
+  let rawFragments = t.context.spec.endpoints.postProofread.responseExample.fragments
+  t.context.glvrd.hintsCache = t.context.spec.endpoints.postHints.responseExample.hints // emulate caches
 
-  let _makeRequestStub = sinon.stub(t.context.glvrd, '_makeRequest')
+  let _makeRequestStub = t.context.sandbox.stub(t.context.glvrd, '_makeRequest')
 
   return t.context.glvrd
     ._fillRawFragmentsWithHints(rawFragments)
@@ -70,16 +74,17 @@ test('use cached hints if available', t => {
 })
 
 test('request uncached hints while several already cached', t => {
-  let rawFragments = endpointsSpec.endpoints.postProofread.responseExample.fragments
+  let rawFragments = t.context.spec.endpoints.postProofread.responseExample.fragments
+
   t.context.glvrd.hintsCache = { // emulate cache
     'r661353765732': { 'name': 'Сложный синтаксис', 'description': 'Упростите' },
     'r772367523480': { 'name': 'Газетный штамп', 'description': 'Манерно, попробуйте проще' }
   }
 
-  let hintsResponse = endpointsSpec.endpoints.postHints.responseExample
+  let hintsResponse = t.context.spec.endpoints.postHints.responseExample
   Object.keys(t.context.glvrd.hintsCache).forEach(key => delete hintsResponse.hints[key]) // remove cached hints from future response
 
-  let _makeRequestStub = sinon.stub(t.context.glvrd, '_makeRequest')
+  let _makeRequestStub = t.context.sandbox.stub(t.context.glvrd, '_makeRequest')
   _makeRequestStub.returns(Promise.resolve(hintsResponse))
 
   return t.context.glvrd
@@ -101,20 +106,20 @@ test('request uncached hints while several already cached', t => {
 })
 
 test('should accept empty response on proofread', t => {
-  let _makeRequestStub = sinon.stub(t.context.glvrd, '_makeRequest')
+  let _makeRequestStub = t.context.sandbox.stub(t.context.glvrd, '_makeRequest')
   _makeRequestStub.returns(Promise.resolve({ status: 'ok', fragments: [] }))
 
   t.context.glvrd.proofread('dummy text').then(fragments => t.is(fragments, []))
 })
 
 test('should make several hints requests if we have more then permitted for single request', t => {
-  let rawFragments = endpointsSpec.endpoints.postProofread.responseExample.fragments
+  let rawFragments = t.context.spec.endpoints.postProofread.responseExample.fragments
   t.context.glvrd.params.maxHintsCount = 2
 
-  let _makeRequestStub = sinon.stub(t.context.glvrd, '_makeRequest')
+  let _makeRequestStub = t.context.sandbox.stub(t.context.glvrd, '_makeRequest')
   _makeRequestStub.returns(Promise.resolve({ status: 'ok', hints: [ '1' ] }))
 
-  let _fillFragmentsWithHintFromCacheStub = sinon.stub(t.context.glvrd, '_fillFragmentsWithHintFromCache')
+  let _fillFragmentsWithHintFromCacheStub = t.context.sandbox.stub(t.context.glvrd, '_fillFragmentsWithHintFromCache')
   _fillFragmentsWithHintFromCacheStub.returns(Promise.resolve())
 
   t.context.glvrd
@@ -126,7 +131,7 @@ test('should make several hints requests if we have more then permitted for sing
 })
 
 test('should accept callback style', t => {
-  let _makeRequestStub = sinon.stub(t.context.glvrd, '_makeRequest')
+  let _makeRequestStub = t.context.sandbox.stub(t.context.glvrd, '_makeRequest')
   _makeRequestStub.returns(Promise.resolve({ status: 'ok', fragments: [] }))
 
   t.context.glvrd.proofread('dummy text', (err, fragments) => {
@@ -136,9 +141,9 @@ test('should accept callback style', t => {
 })
 
 test('should work throw error for callback style too', t => {
-  let errorFromServer = endpointsSpec.errorsForCover.busy
+  let errorFromServer = t.context.spec.errorsForCover.busy
 
-  let _makeRequestStub = sinon.stub(t.context.glvrd, '_makeRequest')
+  let _makeRequestStub = t.context.sandbox.stub(t.context.glvrd, '_makeRequest')
   _makeRequestStub.returns(Promise.resolve(errorFromServer))
 
   t.context.glvrd.proofread('dummy text', (err, fragments) => {
@@ -148,7 +153,7 @@ test('should work throw error for callback style too', t => {
 })
 
 test('should make several proofread requests for text longer than .params.maxTextLength', t => {
-  let _makeRequestStub = sinon.stub(t.context.glvrd, '_makeRequest')
+  let _makeRequestStub = t.context.sandbox.stub(t.context.glvrd, '_makeRequest')
   _makeRequestStub.returns(Promise.resolve({ status: 'ok', fragments: [] }))
 
   t.context.glvrd.params.maxTextLength = 3
