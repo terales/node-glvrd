@@ -21,7 +21,7 @@ function nodeGlvrd (appName) {
 
   this.req = request.defaults({
     baseUrl: endpointsSpec.baseUrl,
-    timeout: 1600
+    timeout: 3000
   })
 }
 
