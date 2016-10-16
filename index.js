@@ -83,7 +83,7 @@ nodeGlvrd.prototype._fillRawFragmentsWithHints = _async(function _fillRawFragmen
 })
 
 nodeGlvrd.prototype._fillFragmentsWithHintFromCache = function _fillFragmentsWithHintFromCache (fragments) {
-  let prepareFragments = fragment => {
+  return fragments.splice(0).map(fragment => {
     let { name, description } = this.hintsCache[fragment.hint_id]
 
     fragment.hint = {
@@ -94,9 +94,7 @@ nodeGlvrd.prototype._fillFragmentsWithHintFromCache = function _fillFragmentsWit
 
     delete fragment.hint_id
     return fragment
-  }
-
-  return fragments.splice().map(prepareFragments)
+  })
 }
 
 nodeGlvrd.prototype._makeRequest = _async(function _makeRequest (endpointKey, body, isJson = true) {

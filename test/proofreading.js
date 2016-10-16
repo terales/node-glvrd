@@ -50,18 +50,18 @@ test('use cached hints if available', t => {
 
   let _makeRequestStub = sinon.stub(t.context.glvrd, '_makeRequest')
 
-  t.context.glvrd
+  return t.context.glvrd
     ._fillRawFragmentsWithHints(rawFragments)
     .then(filledFragments => {
       t.deepEqual(filledFragments, [
         /* eslint-disable no-multi-spaces */
         { start: 5,   end: 25,  hint: { id: 'r772367523480', name: 'Газетный штамп',       description: 'Манерно, попробуйте проще' } },
         { start: 26,  end: 37,  hint: { id: 'r741067498476', name: 'Необъективная оценка', description: 'Удалите или докажите фактами' } },
-        { start: 54,  end: 61,  hint: { id: 'r772592703516', name: 'Газетный штамп',       description: 'Если вы&nbspне провинциальный журналист, замените на&nbspодно простое слово' } },
+        { start: 54,  end: 61,  hint: { id: 'r772592703516', name: 'Газетный штамп',       description: 'Если вы&nbsp;не провинциальный журналист, замените на&nbsp;одно простое слово' } },
         { start: 65,  end: 85,  hint: { id: 'r600555156012', name: 'Паразит времени',      description: 'Уберите, уточните или противопоставьте прошлому или будущему' } },
-        { start: 112, end: 137, hint: { id: 'r772817883552', name: 'Газетный штамп',       description: 'Если вы&nbspне провинциальный журналист, замените на&nbspодно простое слово' } },
+        { start: 112, end: 137, hint: { id: 'r772817883552', name: 'Газетный штамп',       description: 'Если вы&nbsp;не провинциальный журналист, замените на&nbsp;одно простое слово' } },
         { start: 139, end: 165, hint: { id: 'r661353765732', name: 'Сложный синтаксис',    description: 'Упростите' } },
-        { start: 199, end: 217, hint: { id: 'r585918453672', name: 'Газетный штамп',       description: 'Напишите «интернет» без&nbspкавычек. Можно даже с&nbspзаглавной' } }
+        { start: 199, end: 217, hint: { id: 'r585918453672', name: 'Газетный штамп',       description: 'Напишите «интернет» без&nbsp;кавычек. Можно даже с&nbsp;заглавной' } }
         /* eslint-enable no-multi-spaces */
       ])
 
