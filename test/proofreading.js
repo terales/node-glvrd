@@ -25,6 +25,9 @@ test('proofread just after initialization', t => {
     .withArgs('postProofread', 'text=' + postProofread.textExample)
     .returns(Promise.resolve(postProofread.responseExample))
 
+  let _checkSessionStub = t.context.sandbox.stub(t.context.glvrd, '_checkSessionBeforeRequest')
+  _checkSessionStub.returns(Promise.resolve())
+
   let _fillRawFragmentsWithHintsStub = t.context.sandbox.stub(t.context.glvrd, '_fillRawFragmentsWithHints')
   let filledFragments = [ {
     start: 5,
@@ -35,11 +38,9 @@ test('proofread just after initialization', t => {
       description: 'Манерно, попробуйте проще'
     }
   } ]
-  _fillRawFragmentsWithHintsStub
-    .withArgs(postProofread.responseExample)
-    .returns(Promise.resolve(filledFragments))
+  _fillRawFragmentsWithHintsStub.returns(Promise.resolve(filledFragments))
 
-  t.context.glvrd
+  return t.context.glvrd
     .proofread(postProofread.textExample)
     .then(returnValue => {
       t.deepEqual(returnValue, filledFragments)
@@ -128,6 +129,7 @@ test('should make several hint requests if we have more then permitted for singl
     ._fillRawFragmentsWithHints(rawFragments)
     .then(() => {
       t.is(_makeRequestStub.callCount, 4)
+      t.true(_fillFragmentsWithHintFromCacheStub.called)
       t.deepEqual(t.context.glvrd.hintsCache, {
         '0': '--', '1': '--', '2': '--', '3': '--'
       })

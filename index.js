@@ -41,7 +41,6 @@ nodeGlvrd.prototype.proofread = _async(function proofread (text, callback) {
 
     let fragmentsWithHints = []
     fragmentsWithHints = _await(this._fillRawFragmentsWithHints(fragmentsWithoutHints.fragments))
-    this._checkIfServerError(fragmentsWithoutHints)
 
     if (!callback) return fragmentsWithHints
     callback(null, fragmentsWithHints)
