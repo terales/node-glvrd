@@ -112,21 +112,25 @@ test('should accept empty response on proofread', t => {
   t.context.glvrd.proofread('dummy text').then(fragments => t.is(fragments, []))
 })
 
-test('should make several hints requests if we have more then permitted for single request', t => {
+test('should make several hint requests if we have more then permitted for single request', t => {
   let rawFragments = t.context.spec.endpoints.postProofread.responseExample.fragments
   t.context.glvrd.params.maxHintsCount = 2
 
   let _makeRequestStub = t.context.sandbox.stub(t.context.glvrd, '_makeRequest')
-  _makeRequestStub.returns(Promise.resolve({ status: 'ok', hints: [ '1' ] }))
+  _makeRequestStub.onCall(0).returns(Promise.resolve({ status: 'ok', hints: { '0': '--' } }))
+  _makeRequestStub.onCall(1).returns(Promise.resolve({ status: 'ok', hints: { '1': '--' } }))
+  _makeRequestStub.onCall(2).returns(Promise.resolve({ status: 'ok', hints: { '2': '--' } }))
+  _makeRequestStub.onCall(3).returns(Promise.resolve({ status: 'ok', hints: { '3': '--' } }))
 
   let _fillFragmentsWithHintFromCacheStub = t.context.sandbox.stub(t.context.glvrd, '_fillFragmentsWithHintFromCache')
-  _fillFragmentsWithHintFromCacheStub.returns(Promise.resolve())
 
-  t.context.glvrd
+  return t.context.glvrd
     ._fillRawFragmentsWithHints(rawFragments)
     .then(() => {
       t.is(_makeRequestStub.callCount, 4)
-      t.is(t.context.glvrd.hintsCache, [ '1', '1', '1', '1' ]) // from _makeRequestStub returns × callCount
+      t.deepEqual(t.context.glvrd.hintsCache, {
+        '0': '--', '1': '--', '2': '--', '3': '--'
+      })
     })
 })
 
