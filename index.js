@@ -75,16 +75,20 @@ nodeGlvrd.prototype._fillRawFragmentsWithHints = _async(function _fillRawFragmen
   let hintResposes = _await(Promise.all(hintRequests))
 
   // Fill cache with new hints
-  let hints = []
-  hintResposes.forEach(response => hints.concat(response.hints))
-  Object.assign(this.hintsCache, hints)
+  hintResposes.forEach(response => Object.assign(this.hintsCache, response.hints))
 
   return this._fillFragmentsWithHintFromCache(rawFragments)
 })
 
 nodeGlvrd.prototype._fillFragmentsWithHintFromCache = function _fillFragmentsWithHintFromCache (fragments) {
   return fragments.splice(0).map(fragment => {
-    let { name, description } = this.hintsCache[fragment.hint_id]
+    let hintFromCache = this.hintsCache[fragment.hint_id]
+
+    if (!hintFromCache) {
+      throw new Error(`Can't find hint ${fragment.hint_id} in cache`)
+    }
+
+    let { name, description } = hintFromCache
 
     fragment.hint = {
       id: fragment.hint_id,
