@@ -23,9 +23,8 @@ test('should throw error if there was too many requests sent', t => {
   let requestStub = sinon.stub(t.context.glvrd, 'req')
   requestStub.returns(errorFromServer)
 
-  // TODO Change approach and use t.throws() instead
-  t.context.glvrd.proofread('test').catch(err =>
-    t.is(err, errorFromServer))
+  return t.context.glvrd.proofread('test').catch(err =>
+    t.deepEqual(err, errorFromServer))
 })
 
 test('should throw error if glvrd is busy', t => {
@@ -33,7 +32,6 @@ test('should throw error if glvrd is busy', t => {
   let requestStub = sinon.stub(t.context.glvrd, 'req')
   requestStub.returns(errorFromServer)
 
-  // TODO Change approach and use t.throws() instead
-  t.context.glvrd.proofread('test').catch(err =>
-    t.is(err, errorFromServer))
+  return t.context.glvrd.proofread('test').catch(err =>
+    t.deepEqual(err, errorFromServer))
 })

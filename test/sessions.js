@@ -52,7 +52,7 @@ test('should silently update session if received bad_session error', t => {
   requestStub.onCall(1).returns(newSession)
   requestStub.onCall(2).returns({ status: 'ok', fragments: [] })
 
-  t.context.glvrd.proofread('').then(fragmentsWithHints => {
+  return t.context.glvrd.proofread('').then(fragmentsWithHints => {
     t.is(t.context.glvrd.params.session, newSession.session)
   })
 })
