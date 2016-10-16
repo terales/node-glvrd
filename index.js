@@ -36,7 +36,7 @@ nodeGlvrd.prototype.checkStatus = _async(function checkStatus () {
 
 nodeGlvrd.prototype.proofread = _async(function proofread (text, callback) {
   try {
-    let fragmentsWithoutHints = _await(this._makeRequest('postProofread', 'text=' + text))
+    let fragmentsWithoutHints = _await(this._makeRequest('postProofread', { text: text }))
     this._checkIfServerError(fragmentsWithoutHints)
 
     let fragmentsWithHints = []
@@ -68,7 +68,7 @@ nodeGlvrd.prototype._fillRawFragmentsWithHints = _async(function _fillRawFragmen
   let hintRequests = []
   this._chunkArray(Object.keys(uncachedHintIds), this.params.maxHintsCount)
     .forEach(uncachedHintIdsChunk =>
-      hintRequests.push(this._makeRequest('postHints', 'ids=' + uncachedHintIdsChunk.join(',')))
+      hintRequests.push(this._makeRequest('postHints', { ids: uncachedHintIdsChunk.join(',') }))
     )
 
   let hintResposes = _await(Promise.all(hintRequests))
@@ -118,7 +118,7 @@ nodeGlvrd.prototype._makeRequest = _async(function _makeRequest (endpointKey, bo
   }
 
   if (body) {
-    options.body = body
+    options.form = body
   }
 
   // Make request
