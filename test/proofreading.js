@@ -152,9 +152,9 @@ test('should work throw error for callback style too', t => {
   let _makeRequestStub = t.context.sandbox.stub(t.context.glvrd, '_makeRequest')
   _makeRequestStub.returns(Promise.resolve(errorFromServer))
 
-  t.context.glvrd.proofread('dummy text', (err, fragments) => {
+  return t.context.glvrd.proofread('dummy text', (err, fragments) => {
     t.is(err, errorFromServer)
-    t.falsy(fragments, [])
+    t.falsy(fragments)
   })
 })
 
