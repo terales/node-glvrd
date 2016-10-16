@@ -3,6 +3,7 @@
 const request = require('request-promise-native')
 const _async = require('asyncawait/async')
 const _await = require('asyncawait/await')
+const he = require('he')
 
 const endpointsSpec = require('./endpointsSpec')
 
@@ -75,6 +76,7 @@ nodeGlvrd.prototype._fillRawFragmentsWithHints = _async(function _fillRawFragmen
 
   // Fill cache with new hints
   hintResposes.forEach(response => Object.assign(this.hintsCache, response.hints))
+  this.hintsCache = this._decodeHintsDescription(this.hintsCache)
 
   return this._fillFragmentsWithHintFromCache(rawFragments)
 })
@@ -199,6 +201,17 @@ nodeGlvrd.prototype._checkIfServerError = function _checkIfServerError (function
   if (functionResult.status && functionResult.status === 'error') {
     throw functionResult
   }
+}
+
+nodeGlvrd.prototype._decodeHintsDescription = function _decodeHintsDescription (hints) {
+  let decodedHints = JSON.parse(JSON.stringify(hints))
+
+  Object.keys(decodedHints).forEach(hintId => {
+    let rawDescription = decodedHints[hintId].description
+    decodedHints[hintId].description = he.decode(rawDescription)
+  })
+
+  return decodedHints
 }
 
 module.exports = nodeGlvrd

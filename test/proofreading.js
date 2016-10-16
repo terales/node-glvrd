@@ -51,7 +51,9 @@ test('proofread just after initialization', t => {
 
 test('use cached hints if available', t => {
   let rawFragments = t.context.spec.endpoints.postProofread.responseExample.fragments
-  t.context.glvrd.hintsCache = t.context.spec.endpoints.postHints.responseExample.hints // emulate caches
+  t.context.glvrd.hintsCache = t.context.glvrd._decodeHintsDescription( // emulate caches
+    t.context.spec.endpoints.postHints.responseExample.hints
+  )
 
   let _makeRequestStub = t.context.sandbox.stub(t.context.glvrd, '_makeRequest')
 
@@ -62,11 +64,11 @@ test('use cached hints if available', t => {
         /* eslint-disable no-multi-spaces */
         { start: 5,   end: 25,  hint: { id: 'r772367523480', name: 'Газетный штамп',       description: 'Манерно, попробуйте проще' } },
         { start: 26,  end: 37,  hint: { id: 'r741067498476', name: 'Необъективная оценка', description: 'Удалите или докажите фактами' } },
-        { start: 54,  end: 61,  hint: { id: 'r772592703516', name: 'Газетный штамп',       description: 'Если вы&nbsp;не провинциальный журналист, замените на&nbsp;одно простое слово' } },
+        { start: 54,  end: 61,  hint: { id: 'r772592703516', name: 'Газетный штамп',       description: 'Если вы не провинциальный журналист, замените на одно простое слово' } },
         { start: 65,  end: 85,  hint: { id: 'r600555156012', name: 'Паразит времени',      description: 'Уберите, уточните или противопоставьте прошлому или будущему' } },
-        { start: 112, end: 137, hint: { id: 'r772817883552', name: 'Газетный штамп',       description: 'Если вы&nbsp;не провинциальный журналист, замените на&nbsp;одно простое слово' } },
+        { start: 112, end: 137, hint: { id: 'r772817883552', name: 'Газетный штамп',       description: 'Если вы не провинциальный журналист, замените на одно простое слово' } },
         { start: 139, end: 165, hint: { id: 'r661353765732', name: 'Сложный синтаксис',    description: 'Упростите' } },
-        { start: 199, end: 217, hint: { id: 'r585918453672', name: 'Газетный штамп',       description: 'Напишите «интернет» без&nbsp;кавычек. Можно даже с&nbsp;заглавной' } }
+        { start: 199, end: 217, hint: { id: 'r585918453672', name: 'Газетный штамп',       description: 'Напишите «интернет» без кавычек. Можно даже с заглавной' } }
         /* eslint-enable no-multi-spaces */
       ])
 
@@ -95,11 +97,11 @@ test('request uncached hints while several already cached', t => {
         /* eslint-disable no-multi-spaces */
         { start: 5,   end: 25,  hint: { id: 'r772367523480', name: 'Газетный штамп',       description: 'Манерно, попробуйте проще' } },
         { start: 26,  end: 37,  hint: { id: 'r741067498476', name: 'Необъективная оценка', description: 'Удалите или докажите фактами' } },
-        { start: 54,  end: 61,  hint: { id: 'r772592703516', name: 'Газетный штамп',       description: 'Если вы&nbsp;не провинциальный журналист, замените на&nbsp;одно простое слово' } },
+        { start: 54,  end: 61,  hint: { id: 'r772592703516', name: 'Газетный штамп',       description: 'Если вы не провинциальный журналист, замените на одно простое слово' } },
         { start: 65,  end: 85,  hint: { id: 'r600555156012', name: 'Паразит времени',      description: 'Уберите, уточните или противопоставьте прошлому или будущему' } },
-        { start: 112, end: 137, hint: { id: 'r772817883552', name: 'Газетный штамп',       description: 'Если вы&nbsp;не провинциальный журналист, замените на&nbsp;одно простое слово' } },
+        { start: 112, end: 137, hint: { id: 'r772817883552', name: 'Газетный штамп',       description: 'Если вы не провинциальный журналист, замените на одно простое слово' } },
         { start: 139, end: 165, hint: { id: 'r661353765732', name: 'Сложный синтаксис',    description: 'Упростите' } },
-        { start: 199, end: 217, hint: { id: 'r585918453672', name: 'Газетный штамп',       description: 'Напишите «интернет» без&nbsp;кавычек. Можно даже с&nbsp;заглавной' } }
+        { start: 199, end: 217, hint: { id: 'r585918453672', name: 'Газетный штамп',       description: 'Напишите «интернет» без кавычек. Можно даже с заглавной' } }
         /* eslint-enable no-multi-spaces */
       ])
       t.true(_makeRequestStub.called)
@@ -118,10 +120,10 @@ test('should make several hint requests if we have more then permitted for singl
   t.context.glvrd.params.maxHintsCount = 2
 
   let _makeRequestStub = t.context.sandbox.stub(t.context.glvrd, '_makeRequest')
-  _makeRequestStub.onCall(0).returns(Promise.resolve({ status: 'ok', hints: { '0': '--' } }))
-  _makeRequestStub.onCall(1).returns(Promise.resolve({ status: 'ok', hints: { '1': '--' } }))
-  _makeRequestStub.onCall(2).returns(Promise.resolve({ status: 'ok', hints: { '2': '--' } }))
-  _makeRequestStub.onCall(3).returns(Promise.resolve({ status: 'ok', hints: { '3': '--' } }))
+  _makeRequestStub.onCall(0).returns(Promise.resolve({ status: 'ok', hints: { '0': { description: '' } } }))
+  _makeRequestStub.onCall(1).returns(Promise.resolve({ status: 'ok', hints: { '1': { description: '' } } }))
+  _makeRequestStub.onCall(2).returns(Promise.resolve({ status: 'ok', hints: { '2': { description: '' } } }))
+  _makeRequestStub.onCall(3).returns(Promise.resolve({ status: 'ok', hints: { '3': { description: '' } } }))
 
   let _fillFragmentsWithHintFromCacheStub = t.context.sandbox.stub(t.context.glvrd, '_fillFragmentsWithHintFromCache')
 
@@ -131,7 +133,10 @@ test('should make several hint requests if we have more then permitted for singl
       t.is(_makeRequestStub.callCount, 4)
       t.true(_fillFragmentsWithHintFromCacheStub.called)
       t.deepEqual(t.context.glvrd.hintsCache, {
-        '0': '--', '1': '--', '2': '--', '3': '--'
+        '0': { description: '' },
+        '1': { description: '' },
+        '2': { description: '' },
+        '3': { description: '' }
       })
     })
 })
