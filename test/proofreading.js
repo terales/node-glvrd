@@ -22,7 +22,7 @@ test('proofread just after initialization', t => {
 
   let _makeRequestStub = t.context.sandbox.stub(t.context.glvrd, '_makeRequest')
   _makeRequestStub
-    .withArgs('postProofread', 'text=' + postProofread.textExample)
+    .withArgs('postProofread', { text: postProofread.textExample })
     .returns(Promise.resolve(postProofread.responseExample))
 
   let _checkSessionStub = t.context.sandbox.stub(t.context.glvrd, '_checkSessionBeforeRequest')
